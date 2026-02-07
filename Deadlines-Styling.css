@@ -1,0 +1,86 @@
+*{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.filters,h1,.deadline{
+    margin-left:20px;
+}
+
+.filter-bttns, .detail-bttns{
+    padding: 8px 16px;
+    margin-right:8px;
+    background-color: white;
+    border-width: 1px;
+    border-radius: 15px;
+    border-color: black;
+    transition: box-shadow 0.3s ease;
+}
+
+.filter-bttns:hover{
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.detail-bttns:hover{
+    background-color: black;
+    color:white;
+}
+.deadline{
+    background-color: white;
+    border-width: 0.5px;
+    border-color: black;
+    border-style: solid;
+    display: inline-block;
+    padding-right:17cm;
+    padding-bottom:15px;
+    padding-left: 20px;
+    margin-top: 30px;
+    border-left: 4px solid;
+    border-radius: 30px;
+}
+.deadline:hover{
+    box-shadow:15px 8px 20px rgba(0,0,0,0.15);
+}
+h3{
+    margin-top:0px;
+    margin-bottom:0px;
+}
+.status{
+    margin-bottom: 10px;
+    padding:3px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    display:inline-block;
+
+}
+
+.status.overdue{
+    color:red;
+    background-color:#ffcccc;
+}
+.deadline.overdue{
+    border-left-color: red;
+}
+.course{
+    font-size: 14px;
+    margin-bottom:10px;
+    margin-top:15px;
+}
+.details{
+    font-size:14px;
+    margin-bottom: 10px;
+}
+
+.details span{
+    margin-right:15px;
+}
+.deadline.completed{
+    border-left-color: green;
+}
+.status.completed{
+    color:green;
+    background-color: #ccffcc;
+}
+.status.pending{
+    background-color: #ffffcc;
+    color: #666;
+}

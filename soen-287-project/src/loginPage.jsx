@@ -47,9 +47,7 @@ function TopNavBar()
     return(
         <nav className='navbar'>
             <div className='navbar-left'>
-                <li>
-                    <Link to="/">SOEN287 Project</Link>
-                </li>
+                <Link to="/">SOEN287 Project</Link>
             </div>
         </nav>
     )

@@ -1,5 +1,11 @@
 import { useState } from 'react'
 import landingBG from './assets/landingBG.png'
+import {
+  Link
+} from "react-router-dom";
+import './landingPage.css'
+
+
 
 function LandingPage() 
 {
@@ -26,15 +32,11 @@ function TopNavBar()
     return(
         <nav className='navbar'>
             <div className='navbar-left'>
-                <a href='/' className='logo'>
-                    SOEN Project cool
-                </a>
+                <Link className="logo" to="/">SOEN287 Project</Link>
             </div>
 
             <div className='navbar-right'>
-                <a href='/login' className='login-button'>
-                    Sign Up
-                </a>
+                <Link className='login-button' to="/login">Sign Up</Link>
             </div>
         </nav>
     )

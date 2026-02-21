@@ -2,9 +2,14 @@ import {
   Link
 } from "react-router-dom";
 import './vertNavPane.css'
+import { useLocation } from "react-router-dom";
 
 function Navbar()
 {
+    let location = useLocation();
+
+    if(location.pathname === '/' || location.pathname.startsWith('/login')) return null;
+
     return(
         <nav className='vertical-navbar'>
             <h3>

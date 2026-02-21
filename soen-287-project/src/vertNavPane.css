@@ -8,6 +8,7 @@
     width: auto;
     max-width: 18rem;
     max-height: none;
+    height: fit-content;
     border-radius: 15px;
     margin: 25px 40px 25px 25px;
 }
@@ -51,10 +52,12 @@
 }
 
 
+
 .vertical-navbar .nav-button{
     padding: 5px 20px 10px 5px;
     margin: auto;
     min-width: 70%;
+    width: 80%;
     border: none;
     font-family: inherit;
     font-size: inherit;
@@ -62,6 +65,8 @@
     cursor: pointer;
     letter-spacing: 1px;
     font-weight: 700;
+    text-align: left;
+    justify-self: left;
     outline: none;
     position: relative;
     -webkit-transition: all 0.3s;
@@ -85,5 +90,8 @@
 }
 
 .vertical-navbar h3{
-    width: 70%;
+    text-align: left;
+    font-weight: 700;
+    color: black;
+    width: 90%;
 }

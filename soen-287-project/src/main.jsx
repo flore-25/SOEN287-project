@@ -6,6 +6,7 @@ import './index.css'
 import LandingPage from './landingPage.jsx'
 import LoginPage from './loginPage.jsx'
 import Dashboard from './Dashboard.jsx'
+import Deadlines from './deadlines.jsx'
 import { ROUTES } from './constants/index.js'
 
 createRoot(document.getElementById('root')).render(
@@ -24,6 +25,7 @@ createRoot(document.getElementById('root')).render(
               </div>
             }
           />
+          <Route path="/deadlines" element={<Deadlines />} />
           </Routes>
         </Router>
       </AuthProvider>

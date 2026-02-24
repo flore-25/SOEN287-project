@@ -11,6 +11,7 @@ function Navbar()
     if(location.pathname === '/' || location.pathname.startsWith('/login')) return null;
 
     return(
+        <>
         <nav className='vertical-navbar'>
             <h3>
                 Soen 287 Project
@@ -21,6 +22,10 @@ function Navbar()
             <div className="spacing-line"></div>
             <Link className="nav-button account-link icon icon-user" to="/">My Account</Link>
         </nav>
+        <div className="nav-background">
+            
+        </div>
+        </>
     )
 }
 

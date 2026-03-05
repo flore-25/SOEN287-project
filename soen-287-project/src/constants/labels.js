@@ -23,7 +23,7 @@ export const COURSE_MENU = {
 
 export const LOGIN = {
   GREETING: 'Hello!',
-  EMAIL_PLACEHOLDER: 'Email',
+  EMAIL_PLACEHOLDER: 'Email Address',
   PASSWORD_PLACEHOLDER: 'Password',
   SUBMIT: 'Log in',
 }

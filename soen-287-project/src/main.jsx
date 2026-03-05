@@ -7,6 +7,8 @@ import LandingPage from './landingPage.jsx'
 import LoginPage from './loginPage.jsx'
 import Dashboard from './Dashboard.jsx'
 import { ROUTES } from './constants/index.js'
+import Deadlines from './deadlines.jsx';
+import Charts from './charts.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

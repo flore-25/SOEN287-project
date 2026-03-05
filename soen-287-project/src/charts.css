@@ -69,3 +69,15 @@ select {
   font-size: 11px;
   color: #888;
 }
+
+h1 {
+    color: black;
+}
+
+h2 {
+    color: black;
+}
+
+.bar-percent {
+    color: black;
+}

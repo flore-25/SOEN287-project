@@ -91,3 +91,29 @@ h3{
     background-color: #ffffcc;
     color: #666;
 }
+
+.deadline h3 {
+    color: black;
+}
+
+.deadline .course {
+    color: black;
+}
+
+.deadline .details span {
+    color: black;
+}
+
+h1 {
+    color: black;
+}
+
+.filter-bttns {
+    color: black;
+}
+.detail-bttns {
+    color: black;
+}
+.deadline.pending {
+    border-left-color: #f5c842;
+}

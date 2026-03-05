@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import TopNavBar from './components/TopNavBar'
 import CourseCard from './components/CourseCard'
 import AddCourseButton from './components/AddCourseButton'
 import CourseForm from './components/CourseForm'
@@ -64,19 +63,7 @@ export default function Dashboard() {
   }, [])
 
   return (
-    <div
-      className="dashboard"
-      style={{
-        width: '100%',
-        minWidth: '100%',
-        maxWidth: '100vw',
-        flex: '1 1 0',
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <TopNavBar />
+    <div className="dashboard">
       <main className="dashboard__main">
         <header className="dashboard__header">
           <h1 className="dashboard__title">{DASHBOARD_LABELS.TITLE}</h1>

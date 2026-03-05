@@ -9,6 +9,8 @@ import Dashboard from './Dashboard.jsx'
 import Navbar from './vertNavPane.jsx'
 import TopNavBar from './components/TopNavBar.jsx'
 import { ROUTES } from './constants/index.js'
+import Deadlines from './deadlines.jsx';
+import Charts from './charts.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -35,6 +37,8 @@ createRoot(document.getElementById('root')).render(
                 </div>
               }
             />
+            <Route path="/deadlines" element={<Deadlines />} />
+            <Route path="/charts" element={<Charts />} />
           </Routes>
         </Router>
       </AuthProvider>

@@ -1,0 +1,144 @@
+*{
+    font-family: Arial, Helvetica, sans-serif;
+}
+body{
+    background-color:#faf8f0 ;
+}
+
+.filters,h1{
+    margin-left:20px;
+}
+
+.filter-bttns, .detail-bttns{
+    padding: 8px 16px;
+    margin-right:8px;
+    background-color: white;
+    border-width: 1px;
+    border-radius: 15px;
+    border-color: black;
+    transition: box-shadow 0.3s ease;
+}
+.detail-bttns{
+    transition:background-color 0.3s ease;
+}
+
+.filter-bttns:hover{
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.detail-bttns:hover{
+    background-color: black;
+    color:white;
+}
+.deadline {
+    border-width: 0.5px;
+    border-color: black;
+    border-style: solid;
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding-right: 40px;
+    padding-bottom: 15px;
+    padding-left: 20px;
+    margin-top: 30px;
+    border-left: 4px solid;
+    border-radius: 30px;
+    transition: box-shadow 0.3s ease;
+    background-color: white;
+}
+.deadline:hover{
+    box-shadow:15px 8px 20px rgba(0,0,0,0.15);
+}
+h3{
+    margin-top:0px;
+    margin-bottom:0px;
+}
+.status{
+    margin-bottom: 10px;
+    padding:3px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    display:inline-block;
+
+}
+
+.status.overdue{
+    color:red;
+    background-color:#ffcccc;
+}
+.deadline.overdue{
+    border-left-color: red;
+}
+.course{
+    font-size: 14px;
+    margin-bottom:10px;
+    margin-top:15px;
+}
+.details{
+    font-size:14px;
+    margin-bottom: 10px;
+}
+
+.details span{
+    margin-right:15px;
+}
+.deadline.completed{
+    border-left-color: green;
+}
+.status.completed{
+    color:green;
+    background-color: #ccffcc;
+}
+.status.pending{
+    background-color: #ffffcc;
+    color: #666;
+}
+
+.deadline h3 {
+    color: black;
+}
+
+.deadline .course {
+    color: black;
+}
+
+.deadline .details span {
+    color: black;
+}
+
+h1 {
+    color: black;
+}
+
+.filter-bttns {
+    color: black;
+}
+.detail-bttns {
+    color: black;
+}
+.deadline.pending {
+    border-left-color: #f5c842;
+}
+
+.page-layout {
+  display: flex;
+  flex-direction: row;
+}
+
+.page-content {
+  padding: 30px;
+  flex: 2;
+}
+
+.deadlines-container {
+  width: 800px;
+}
+.left{
+  flex:0 0 auto;
+  height:700px;
+  width:fit-content
+}
+.vertical-navbar{
+  height:700px;
+  width:300px;
+}

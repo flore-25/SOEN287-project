@@ -14,8 +14,13 @@
 	"dependencies": {
 		"react": "^19.1.1",
 		"react-dom": "^19.1.1",
+<<<<<<< HEAD
 		"react-router-dom": "^7.13.0",
 		"recharts": "^3.7.0"
+=======
+		"react-fontawesome": "^1.7.1",
+		"react-router-dom": "^7.13.0"
+>>>>>>> dee2c9d06f50e1d670832e560e74804b735b66fc
 	},
 	"devDependencies": {
 		"@cloudflare/vite-plugin": "^1.23.1",

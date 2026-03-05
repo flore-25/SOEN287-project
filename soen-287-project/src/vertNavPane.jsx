@@ -17,8 +17,8 @@ function Navbar()
                 Soen 287 Project
             </h3>
             <Link className="nav-button dashboard-link icon icon-dashboard" to="/">Dashboard</Link>
-            <Link className="nav-button deadlines-link icon icon-calendar" to="/">Upcoming Deadlines</Link>
-            <Link className="nav-button progress-link icon icon-progress" to="/">My Progress</Link>
+            <Link className="nav-button deadlines-link icon icon-calendar" to="/deadlines">Upcoming Deadlines</Link>
+            <Link className="nav-button progress-link icon icon-progress" to="/charts">My Progress</Link>
             <div className="spacing-line"></div>
             <Link className="nav-button account-link icon icon-user" to="/">My Account</Link>
         </nav>

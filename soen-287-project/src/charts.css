@@ -81,3 +81,25 @@ h2 {
 .bar-percent {
     color: black;
 }
+
+.page-layout {
+  display: flex;
+  flex-direction: row;
+}
+
+.page-content {
+  flex: 2;
+  padding: 30px;
+}
+.card{
+  width:900px;
+}
+.left{
+  flex:0 0 auto;
+  height:700px;
+  width:fit-content
+}
+.vertical-navbar{
+  height:700px;
+  width:300px;
+}

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import "./charts.css";
+import Navbar from './vertNavPane.jsx';
 
 
 const courses = ["ENGR 233", "SOEN 287", "COMP 249", "SOEN 228", "ENGR 201"];
@@ -63,9 +64,12 @@ export default function Progress() {
   const [selectedCourse, setSelectedCourse] = useState("ENGR 233");
 
   return (
-    <div className="page">
-      <h1>My Progress</h1>
-
+    <div className="page-layout">
+      <div className="left">
+      <Navbar />
+      </div>
+      <div className="page-content">
+        <h1>My Progress</h1>
       <div className="card">
         <h2>Summary WINTER 2026</h2>
         <div className="bars-row">
@@ -104,6 +108,8 @@ export default function Progress() {
           </LineChart>
         </ResponsiveContainer>
       </div>
+      </div>
+      
 
     </div>
   );

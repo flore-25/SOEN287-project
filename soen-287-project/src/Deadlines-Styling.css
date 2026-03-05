@@ -5,7 +5,7 @@ body{
     background-color:#faf8f0 ;
 }
 
-.filters,h1,.deadline{
+.filters,h1{
     margin-left:20px;
 }
 
@@ -30,13 +30,15 @@ body{
     background-color: black;
     color:white;
 }
-.deadline{
+.deadline {
     border-width: 0.5px;
     border-color: black;
     border-style: solid;
-    display: inline-block;
-    padding-right:17cm;
-    padding-bottom:15px;
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding-right: 40px;
+    padding-bottom: 15px;
     padding-left: 20px;
     margin-top: 30px;
     border-left: 4px solid;
@@ -116,4 +118,27 @@ h1 {
 }
 .deadline.pending {
     border-left-color: #f5c842;
+}
+
+.page-layout {
+  display: flex;
+  flex-direction: row;
+}
+
+.page-content {
+  padding: 30px;
+  flex: 2;
+}
+
+.deadlines-container {
+  width: 800px;
+}
+.left{
+  flex:0 0 auto;
+  height:700px;
+  width:fit-content
+}
+.vertical-navbar{
+  height:700px;
+  width:300px;
 }

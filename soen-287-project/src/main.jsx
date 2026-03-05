@@ -37,6 +37,8 @@ createRoot(document.getElementById('root')).render(
                 </div>
               }
             />
+            <Route path="/deadlines" element={<Deadlines />} />
+            <Route path="/charts" element={<Charts />} />
           </Routes>
         </Router>
       </AuthProvider>

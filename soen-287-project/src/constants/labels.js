@@ -29,6 +29,7 @@ export const LOGIN = {
 }
 
 export const COURSE_FORM = {
+  COURSE_ID: 'Course ID',
   ADD_TITLE: 'Add course',
   EDIT_TITLE: 'Edit course',
   CODE_LABEL: 'Course code',
@@ -37,6 +38,7 @@ export const COURSE_FORM = {
   INSTRUCTOR_PLACEHOLDER: 'e.g. John Doe',
   TERM_LABEL: 'Term',
   TERM_PLACEHOLDER: 'e.g. WINTER 2026',
+  ID_PLACEHOLDER: 'e.g. d5j3d3',
   SAVE: 'Save',
   CANCEL: 'Cancel',
 }

@@ -7,7 +7,7 @@ const emptyCourse = { code: '', instructor: '', term: '' }
 /**
  * Single form for both add and edit. initialCourse null = add; object = edit.
  */
-export default function CourseForm({ initialCourse, onSubmit, onCancel }) {
+export default function CourseFormInstructor({ initialCourse, onSubmit, onCancel }) {
   const [form, setForm] = useState(initialCourse ? { ...initialCourse } : { ...emptyCourse })
 
   useEffect(() => {

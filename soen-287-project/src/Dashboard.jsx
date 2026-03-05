@@ -2,7 +2,8 @@ import { useState, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import CourseCard from './components/CourseCard'
 import AddCourseButton from './components/AddCourseButton'
-import CourseForm from './components/CourseForm'
+import CourseFormInstructor from './components/CourseFormInstructor'
+import CourseFormStudent from './components/CourseFormStudent'
 import { useAuth, useIsStudent } from './context/AuthContext'
 import { ROUTES, DASHBOARD as DASHBOARD_LABELS } from './constants'
 import { SAMPLE_COURSES } from './data/sampleCourses'
@@ -67,7 +68,7 @@ export default function Dashboard() {
       <main className="dashboard__main">
         <header className="dashboard__header">
           <h1 className="dashboard__title">{DASHBOARD_LABELS.TITLE}</h1>
-          {isStudent && (
+          {(
             <div className="dashboard__add">
               <AddCourseButton onClick={openAdd} />
             </div>
@@ -85,8 +86,16 @@ export default function Dashboard() {
           ))}
         </div>
       </main>
-      {formState.open && (
-        <CourseForm
+
+      {formState.open && isStudent &&(
+        <CourseFormStudent
+          initialCourse={formState.course}
+          onSubmit={handleSave}
+          onCancel={closeForm}
+        />
+      )}
+      {formState.open && !isStudent &&(
+        <CourseFormInstructor
           initialCourse={formState.course}
           onSubmit={handleSave}
           onCancel={closeForm}

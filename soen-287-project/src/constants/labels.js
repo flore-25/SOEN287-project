@@ -42,3 +42,26 @@ export const COURSE_FORM = {
   SAVE: 'Save',
   CANCEL: 'Cancel',
 }
+
+/** Assignment categories for course assessments */
+export const ASSIGNMENT_CATEGORIES = ['quiz', 'lab', 'exam', 'assignment']
+
+/** Assignment status (student view) */
+export const ASSIGNMENT_STATUS = {
+  COMPLETED: 'Completed',
+  PENDING: 'Pending',
+}
+
+export const COURSE_DETAIL = {
+  GRADE: 'Grade',
+  EARNED_SO_FAR: 'earned so far',
+  ASSESSMENTS: 'Assessments',
+  ASSESSMENT: 'Assessment',
+  DUE_DATE: 'Due date',
+  CATEGORIE: 'Categorie',
+  GRADE_LABEL: 'Grade',
+  WEIGHT: 'Weight',
+  STATUS: 'Status',
+  ADD_ASSIGNMENT: 'Add assignment',
+  REMOVE_SELECTED: 'Remove selected',
+}

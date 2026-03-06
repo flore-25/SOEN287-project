@@ -5,8 +5,8 @@ import AddCourseButton from './components/AddCourseButton'
 import CourseFormInstructor from './components/CourseFormInstructor'
 import CourseFormStudent from './components/CourseFormStudent'
 import { useAuth, useIsStudent } from './context/AuthContext'
+import { useCourses } from './context/CoursesContext'
 import { ROUTES, DASHBOARD as DASHBOARD_LABELS } from './constants'
-import { SAMPLE_COURSES } from './data/sampleCourses'
 import './dashboard.css'
 
 /** Generate a simple unique id for local state. Replace with API id when backend exists. */
@@ -18,8 +18,8 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const { isLoggedIn } = useAuth()
   const isStudent = useIsStudent()
+  const { courses, setCourses } = useCourses()
 
-  const [courses, setCourses] = useState(SAMPLE_COURSES)
   const [formState, setFormState] = useState({ open: false, course: null })
 
   useEffect(() => {

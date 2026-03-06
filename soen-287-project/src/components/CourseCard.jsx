@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { DASHBOARD, COURSE_MENU } from '../constants'
+import { ROUTES } from '../constants/routes'
 import CourseMenu from './CourseMenu'
 import '../styles/courseCard.css'
 
@@ -29,19 +31,26 @@ export default function CourseCard({ course, onEdit, onRemove, showActions }) {
   return (
     <article className="course-card">
       <div className="course-card__accent" style={gradientStyle} aria-hidden />
-      <div className="course-card__body">
+      <Link
+        to={ROUTES.courseDetail(course.id)}
+        className="course-card__body course-card__body--link"
+      >
         <h3 className="course-card__code">{course.code}</h3>
         <p className="course-card__meta">
           {DASHBOARD.INSTRUCTOR_LABEL}: {course.instructor}
         </p>
         <p className="course-card__term">{course.term}</p>
-      </div>
+      </Link>
       {showActions && (
         <div className="course-card__actions" ref={menuRef}>
           <button
             type="button"
             className="course-card__menu-trigger"
-            onClick={() => setMenuOpen((o) => !o)}
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              setMenuOpen((o) => !o)
+            }}
             aria-expanded={menuOpen}
             aria-haspopup="menu"
             aria-label="Course options"

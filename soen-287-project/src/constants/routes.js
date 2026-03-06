@@ -6,6 +6,8 @@ export const ROUTES = {
   HOME: '/',
   LOGIN: '/login',
   DASHBOARD: '/dashboard',
+  COURSE_DETAIL: '/course/:courseId',
+  courseDetail: (courseId) => `/course/${courseId}`,
   DEADLINES: '/deadlines',
   CHARTS: '/charts',
 }

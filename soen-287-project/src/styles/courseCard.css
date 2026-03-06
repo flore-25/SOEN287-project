@@ -26,6 +26,16 @@
   gap: 0.25rem;
 }
 
+.course-card__body--link {
+  color: inherit;
+  text-decoration: none;
+  transition: background-color 0.15s;
+}
+
+.course-card__body--link:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
 .course-card__code {
   margin: 0;
   font-size: 1.1rem;

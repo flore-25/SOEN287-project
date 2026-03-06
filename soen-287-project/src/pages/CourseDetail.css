@@ -1,0 +1,211 @@
+.course-detail {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 0;
+  padding: clamp(1rem, 4vw, 2rem);
+  background-color: #faf8f0;
+  overflow-y: auto;
+}
+
+.course-detail__title {
+  margin: 0 0 1.25rem;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.course-detail__grade-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  max-width: 320px;
+}
+
+.course-detail__grade-card-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.course-detail__grade-value {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2563eb;
+  line-height: 1.2;
+}
+
+.course-detail__grade-earned {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.course-detail__assessments {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.course-detail__assessments-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #eee;
+}
+
+.course-detail__assessments-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.course-detail__add-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: #ec4899;
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.course-detail__add-btn:hover {
+  background: #db2777;
+}
+
+.course-detail__remove-btn {
+  margin-left: auto;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #ef4444;
+  background: #fff;
+  color: #ef4444;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.course-detail__remove-btn:hover {
+  background: #fef2f2;
+}
+
+.course-detail__table-wrap {
+  overflow-x: auto;
+  overflow-y: auto;
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.course-detail__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.course-detail__table th,
+.course-detail__table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.course-detail__table th {
+  font-weight: 600;
+  color: #555;
+  background: #fafafa;
+}
+
+.course-detail__table td {
+  color: #333;
+}
+
+.course-detail__table tbody tr:hover {
+  background: #fafafa;
+}
+
+.course-detail__table th:first-child,
+.course-detail__table td:first-child {
+  width: 40px;
+}
+
+.course-detail__select {
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-size: 0.85rem;
+  min-width: 100px;
+}
+
+.course-detail__select--quiz { background: #dbeafe; }
+.course-detail__select--lab { background: #fed7aa; }
+.course-detail__select--exam { background: #fce7f3; }
+.course-detail__select--assignment { background: #fef9c3; }
+
+.course-detail__select--status.course-detail__status--completed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.course-detail__select--status.course-detail__status--pending {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.course-detail__badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.course-detail__badge--quiz { background: #dbeafe; color: #1e40af; }
+.course-detail__badge--lab { background: #fed7aa; color: #9a3412; }
+.course-detail__badge--exam { background: #fce7f3; color: #9d174d; }
+.course-detail__badge--assignment { background: #fef9c3; color: #854d0e; }
+
+.course-detail__input-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.course-detail__input {
+  width: 56px;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.course-detail__menu-btn {
+  padding: 0.25rem 0.5rem;
+  border: none;
+  background: transparent;
+  color: #666;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.course-detail__menu-btn:hover {
+  background: #f0f0f0;
+  color: #333;
+}

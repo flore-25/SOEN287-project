@@ -37,8 +37,38 @@ createRoot(document.getElementById('root')).render(
                 </div>
               }
             />
-            <Route path="/deadlines" element={<Deadlines />} />
-            <Route path="/charts" element={<Charts />} />
+            <Route
+              path="/deadlines"
+              element={
+                <div className="dashboard-route">
+                  <TopNavBar />
+                  <div className="app-layout">
+                    <div className="app-layout__nav">
+                      <Navbar />
+                    </div>
+                    <div className="app-layout__content">
+                      <Deadlines />
+                    </div>
+                  </div>
+                </div>
+              }
+            />
+            <Route
+              path="/charts"
+              element={
+                <div className="dashboard-route">
+                  <TopNavBar />
+                  <div className="app-layout">
+                    <div className="app-layout__nav">
+                      <Navbar />
+                    </div>
+                    <div className="app-layout__content">
+                      <Charts />
+                    </div>
+                  </div>
+                </div>
+              }
+            />
           </Routes>
         </Router>
       </AuthProvider>

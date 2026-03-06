@@ -1,6 +1,5 @@
 import { useState } from "react";
 import "./deadlines-Styling.css";
-import Navbar from './vertNavPane.jsx';
 
 const deadlinesData = [
   {
@@ -51,11 +50,7 @@ export default function Deadlines() {
   };
 
   return (
-    <div className="page-layout">
-      <div className="left">
-      <Navbar />
-      </div>
-      <div className="page-content">
+    <div className="page-content">
       <h1>Deadlines</h1>
       <div className="filters">
         {filters.map((f) => (
@@ -89,7 +84,6 @@ export default function Deadlines() {
           </button>
         </div>
       ))}
-      </div>
       </div>
     </div>
   );

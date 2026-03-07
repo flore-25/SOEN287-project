@@ -1,9 +1,9 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useCourses } from '../context/CoursesContext'
-import { useAuth } from '../context/AuthContext'
 import { ROLES } from '../constants'
 import { ROUTES } from '../constants/routes'
+import { useAuth, useIsStudent } from '../context/AuthContext'
 import {
   COURSE_DETAIL,
   ASSIGNMENT_CATEGORIES,
@@ -20,8 +20,7 @@ export default function CourseDetail() {
 
   const [selectedIds, setSelectedIds] = useState(new Set())
 
-  const isInstructor = user?.role === ROLES.ADMINISTRATOR
-  const isStudent = user?.role === ROLES.STUDENT
+  const isStudent = useIsStudent()
 
   const assignments = course?.assignments ?? []
 
@@ -111,7 +110,7 @@ export default function CourseDetail() {
       <section className="course-detail__assessments">
         <div className="course-detail__assessments-header">
           <h2>{COURSE_DETAIL.ASSESSMENTS}</h2>
-          {isInstructor && (
+          {!isStudent && (
             <button
               type="button"
               className="course-detail__add-btn"
@@ -171,7 +170,7 @@ export default function CourseDetail() {
                   <td>{a.name}</td>
                   <td>{a.dueDate}</td>
                   <td>
-                    {isInstructor ? (
+                    {!isStudent ? (
                       <select
                         value={a.category}
                         onChange={(e) => updateOne(a.id, 'category', e.target.value)}
@@ -190,7 +189,7 @@ export default function CourseDetail() {
                     )}
                   </td>
                   <td>
-                    {isInstructor ? (
+                    {!isStudent ? (
                       <span className="course-detail__input-wrap">
                         <input
                           type="number"
@@ -209,7 +208,7 @@ export default function CourseDetail() {
                     )}
                   </td>
                   <td>
-                    {isInstructor ? (
+                    {!isStudent ? (
                       <span className="course-detail__input-wrap">
                         <input
                           type="number"

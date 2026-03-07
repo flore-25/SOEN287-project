@@ -58,7 +58,7 @@ export const COURSE_DETAIL = {
   ASSESSMENTS: 'Assessments',
   ASSESSMENT: 'Assessment',
   DUE_DATE: 'Due date',
-  CATEGORIE: 'Categorie',
+  CATEGORIE: 'Category',
   GRADE_LABEL: 'Grade',
   WEIGHT: 'Weight',
   STATUS: 'Status',

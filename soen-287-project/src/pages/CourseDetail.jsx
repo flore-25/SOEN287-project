@@ -9,6 +9,7 @@ import {
   ASSIGNMENT_CATEGORIES,
   ASSIGNMENT_STATUS,
 } from '../constants/labels'
+import AddCourseButton from '../components/AddCourseButton'
 import './CourseDetail.css'
 
 export default function CourseDetail() {
@@ -31,15 +32,13 @@ export default function CourseDetail() {
       (sum, a) => sum + ((Number(a.grade) || 0) / 100) * (Number(a.weight) || 0),
       0
     )
-    const totalWeightAll = assignments.reduce((sum, a) => sum + (Number(a.weight) || 0), 0)
-    const earnedSoFar = withGrade.reduce((sum, a) => sum + (Number(a.weight) || 0), 0)
     const avg =
       totalWeightGraded > 0 ? (weightedSum / totalWeightGraded) * 100 : 0
-    const earned =
-      totalWeightAll > 0 ? (earnedSoFar / totalWeightAll) * 100 : 0
+    // Total weight of all assignments that have been graded (e.g. three 10% → 30%)
+    const earnedSoFar = withGrade.reduce((sum, a) => sum + (Number(a.weight) || 0), 0)
     return {
       weightedAverage: Math.round(avg),
-      earnedPercent: Math.round(earned),
+      earnedPercent: Math.round(earnedSoFar),
     }
   }, [assignments])
 
@@ -75,6 +74,7 @@ export default function CourseDetail() {
   }
 
   const handleAddAssignment = () => {
+    if (!courseId) return
     addAssignment(courseId, {
       name: 'New assignment',
       dueDate: new Date().toLocaleDateString('en-CA', { year: 'numeric', month: 'short', day: 'numeric' }),
@@ -111,14 +111,13 @@ export default function CourseDetail() {
         <div className="course-detail__assessments-header">
           <h2>{COURSE_DETAIL.ASSESSMENTS}</h2>
           {!isStudent && (
-            <button
-              type="button"
-              className="course-detail__add-btn"
-              onClick={handleAddAssignment}
-              aria-label={COURSE_DETAIL.ADD_ASSIGNMENT}
-            >
-              +
-            </button>
+            <div className="course-detail__add-wrap">
+              <AddCourseButton
+                onClick={handleAddAssignment}
+                ariaLabel={COURSE_DETAIL.ADD_ASSIGNMENT}
+                title={COURSE_DETAIL.ADD_ASSIGNMENT}
+              />
+            </div>
           )}
           {isStudent && selectedIds.size > 0 && (
             <button

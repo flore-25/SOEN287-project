@@ -1,14 +1,15 @@
 import { DASHBOARD } from '../constants'
 import '../styles/addCourseButton.css'
 
-export default function AddCourseButton({ onClick }) {
+export default function AddCourseButton({ onClick, ariaLabel, title }) {
+  const label = ariaLabel ?? DASHBOARD.ADD_COURSE
   return (
     <button
       type="button"
       className="add-course-button"
       onClick={onClick}
-      aria-label={DASHBOARD.ADD_COURSE}
-      title={DASHBOARD.ADD_COURSE}
+      aria-label={label}
+      title={title ?? label}
     >
       <span className="add-course-button__icon">+</span>
     </button>

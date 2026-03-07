@@ -71,25 +71,8 @@
   color: #1a1a1a;
 }
 
-.course-detail__add-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: none;
-  background: #ec4899;
-  color: #fff;
-  font-size: 1.5rem;
-  line-height: 1;
-  cursor: pointer;
+.course-detail__add-wrap {
   margin-left: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-}
-
-.course-detail__add-btn:hover {
-  background: #db2777;
 }
 
 .course-detail__remove-btn {

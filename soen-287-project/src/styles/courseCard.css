@@ -10,6 +10,31 @@
   min-height: 88px;
 }
 
+.course-card__delete {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: rgba(0, 0, 0, 0.06);
+  color: #666;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 0 12px 0 8px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.course-card__delete:hover {
+  background: #ef4444;
+  color: #fff;
+}
+
 .course-card__accent {
   width: 72px;
   min-width: 56px;

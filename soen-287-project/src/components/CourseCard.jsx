@@ -30,6 +30,19 @@ export default function CourseCard({ course, onEdit, onRemove, showActions }) {
 
   return (
     <article className="course-card">
+      <button
+        type="button"
+        className="course-card__delete"
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          onRemove()
+        }}
+        aria-label="Delete course"
+        title="Delete course"
+      >
+        ×
+      </button>
       <div className="course-card__accent" style={gradientStyle} aria-hidden />
       <Link
         to={ROUTES.courseDetail(course.id)}

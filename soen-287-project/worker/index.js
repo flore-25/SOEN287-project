@@ -1,13 +1,23 @@
-export default {
-  fetch(request, env) {
-    const url = new URL(request.url);
+import { createServer } from "node:http";
+import { httpServerHandler } from "cloudflare:node";
+import express from "express";
+import cors from "cors";
 
-    if (url.pathname.startsWith("/api/")) {
-      return Response.json({
-        name: "Cloudflare",
-      });
-    }
+const app = express();
 
-		return new Response(null, { status: 404 });
-  },
-}
+app.use(express.json());
+app.use(cors());
+
+
+
+app.get("/api", (req, res) =>{
+  res.json({ message: "Express.js running on Cloudflare Workers! "});
+});
+
+app.use((req,res) => {
+  console.log("Unmatched route: ", req.method, req.url);
+  res.status(404).json({ error: "Not found", path: req.url});
+});
+
+const server = createServer(app);
+export default httpServerHandler(server);

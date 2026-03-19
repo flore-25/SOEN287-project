@@ -10,6 +10,23 @@ function LandingPage() {
   const navigate = useNavigate()
   const { isLoggedIn } = useAuth()
 
+  fetch('http://127.0.0.1:8787/api')
+    .then(response =>
+    {
+      console.log("fetching...");
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log(data.message);
+    })
+    .catch(error =>
+    {
+      console.error('Error fetching data:', error);
+    });
+
   useEffect(() => {
     if (isLoggedIn) {
       navigate(ROUTES.DASHBOARD, { replace: true })

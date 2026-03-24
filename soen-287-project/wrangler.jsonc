@@ -16,12 +16,18 @@
 	"compatibility_flags": [
 		"nodejs_compat"
 	],
-	"routes": 
-	[
+	"routes": [
 		{
 			"pattern": "project.chestersbusy.ca",
 			"custom_domain": true
-		} 
+		}
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "website-db",
+			"database_id": "0c66c156-d791-470e-8876-303e2c4dfbf7"
+		}
 	]
 	/**
 	 * Smart Placement

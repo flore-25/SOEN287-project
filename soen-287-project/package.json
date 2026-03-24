@@ -10,7 +10,10 @@
 		"lint": "eslint .",
 		"preview": "npm run build && vite preview",
 		"deploy": "npm run build && wrangler deploy",
-		"cf-typegen": "wrangler types"
+		"cf-typegen": "wrangler types",
+		"sqlLocal": "npx wrangler d1 execute website-db --local --file=./schemas/schema.sql",
+		"sqlRemote": "npx wrangler d1 execute website-db --remote --file=./schemas/schema.sql"
+
 	},
 	"dependencies": {
 		"@types/express": "^5.0.6",

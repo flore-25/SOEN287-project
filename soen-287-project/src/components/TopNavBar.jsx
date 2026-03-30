@@ -25,7 +25,7 @@ export default function TopNavBar() {
             {NAV.LOG_OUT}
           </button>
         ) : (
-          <Link className="login-button" to={ROUTES.LOGIN}>
+          <Link className="login-button" to={ROUTES.SIGNUP}>
             {NAV.SIGN_UP}
           </Link>
         )}

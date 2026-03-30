@@ -5,6 +5,7 @@
 export const APP_NAME = 'SOEN287 Project'
 
 export const NAV = {
+  LOGIN: 'Log In',
   SIGN_UP: 'Sign Up',
   LOG_OUT: 'Log out',
 }
@@ -27,6 +28,15 @@ export const LOGIN = {
   PASSWORD_PLACEHOLDER: 'Password',
   SUBMIT: 'Log in',
 }
+
+export const SIGN_UP = {
+  GREETING: 'Hello!',
+  EMAIL_PLACEHOLDER: 'Email Address',
+  PASSWORD_PLACEHOLDER: 'Password',
+  SUBMIT: 'Sign up',
+  NAME: 'John Doe',
+}
+
 
 export const COURSE_FORM = {
   COURSE_ID: 'Course ID',

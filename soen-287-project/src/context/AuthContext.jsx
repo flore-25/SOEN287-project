@@ -27,5 +27,5 @@ export function useAuth() {
 /** Helper: true if current user is a student (can add/edit/remove courses). */
 export function useIsStudent() {
   const { user } = useAuth()
-  return user?.role === ROLES.ADMINISTRATOR
+  return user?.role === ROLES.STUDENT
 }

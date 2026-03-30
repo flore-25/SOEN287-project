@@ -13,6 +13,7 @@ import CourseDetail from './pages/CourseDetail.jsx'
 import { ROUTES } from './constants/index.js'
 import Deadlines from './deadlines.jsx'
 import Charts from './charts.jsx'
+import SignupPage from './signupPage.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -24,6 +25,7 @@ createRoot(document.getElementById('root')).render(
           <Routes>
             <Route path={ROUTES.HOME} element={<LandingPage />} />
             <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+            <Route path={ROUTES.SIGNUP} element={<SignupPage />} />
             <Route
               path={ROUTES.DASHBOARD}
               element={

@@ -14,13 +14,44 @@ function LoginBox() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Demo: log in as student. Replace with API call and role from backend later.
-    login({
-      id: 'demo-user-1',
-      email: email || 'student@example.com',
-      role: ROLES.STUDENT,
+    
+    const dataOut = {
+      email: email,
+      password: password
+    };
+     fetch('http://127.0.0.1:8787/login/password', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(dataOut)
+     })
+    .then(response =>
+    {
+      console.log("checking password...");
+      if (!response.ok) {
+        return response.json().then(errorData => {
+          const error = new Error(`HTTP error! status ${response.status}`);
+          error.responseJson = errorData;
+          throw error;
+        });
+      }
+      return response.json();
     })
-    navigate(ROUTES.DASHBOARD)
+    .then(data => {
+    console.log(data.message);
+    })
+    .catch(error =>
+    {
+      if(error.responseJson) 
+      {
+         alert(error.responseJson.message);
+      }
+      else
+      {
+        console.error('There has been an error: ', error.message)
+      }
+    });
   }
 
   return (
@@ -31,6 +62,7 @@ function LoginBox() {
           <span className='fa-solid fa-envelope'></span>
           <input
             type="email"
+            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={LOGIN.EMAIL_PLACEHOLDER}
@@ -41,6 +73,7 @@ function LoginBox() {
           <span className='fa-solid fa-lock'></span>
           <input
           type="password"
+          name="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder={LOGIN.PASSWORD_PLACEHOLDER}

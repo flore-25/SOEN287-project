@@ -5,6 +5,7 @@
 export const ROUTES = {
   HOME: '/',
   LOGIN: '/login',
+  SIGNUP: '/signup',
   DASHBOARD: '/dashboard',
   COURSE_DETAIL: '/course/:courseId',
   courseDetail: (courseId) => `/course/${courseId}`,

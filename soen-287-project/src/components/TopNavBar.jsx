@@ -8,9 +8,10 @@ export default function TopNavBar() {
   const navigate = useNavigate()
 
   const handleLogout = () => {
-    logout()
-    navigate(ROUTES.HOME)
-  }
+    logout().then(() => {
+      navigate(ROUTES.LOGIN);
+    });
+  };
 
   return (
     <nav className="navbar">

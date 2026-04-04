@@ -14,7 +14,8 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:8787',
       '/login': 'http://localhost:8787',
-      '/signup': 'http://localhost:8787'
+      '/signup': 'http://localhost:8787',
+      '/logout': 'http://localhost:8787'
     }
   },
 })

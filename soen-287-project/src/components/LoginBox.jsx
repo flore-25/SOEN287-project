@@ -22,36 +22,37 @@ function LoginBox() {
      fetch('/login/password', {
       method: "POST",
       credentials: 'include',
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dataOut)
-     })
-    .then(response =>
-    {
-      console.log("checking password...");
-      if (!response.ok) {
-        return response.json().then(errorData => {
-          const error = new Error(`HTTP error! status ${response.status}`);
-          error.responseJson = errorData;
-          throw error;
-        });
+    })
+    .then(res => {
+      console.log("login response status:", res.status);
+      if (!res.ok) {
+        return res.json().then(e => { throw e; });
       }
-      return response.json();
+      return res.json();
     })
     .then(data => {
-    window.location.href = data.redirect;
+      console.log("login data:", data);
+      return fetch('/login/me', {
+        credentials: 'include',
+        headers: { 'Cache-Control': 'no-cache' }
+      });
     })
-    .catch(error =>
-    {
-      if(error.responseJson) 
-      {
-         alert(error.responseJson.message);
+    .then(res => {
+      console.log("/login/me status:", res.status);
+      return res.ok ? res.json() : null;
+    })
+    .then(data => {
+      console.log("/login/me data:", data);
+      if (data?.user) {
+        login(data.user);
+        navigate(ROUTES.DASHBOARD);
       }
-      else
-      {
-        console.error('There has been an error: ', error.message)
-      }
+    })
+    .catch(error => {
+      console.error("full error:", error);
+      if (error.message) alert(error.message);
     });
   }
 

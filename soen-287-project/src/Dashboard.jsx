@@ -59,9 +59,8 @@ const openAdd = useCallback(() => setFormState({ open: true, course: null }), []
     setCourses((prev) => prev.filter((c) => c.id !== course.id))
   }, [])
 
-  if (loading || !isLoggedIn) {
-    return null
-  }
+  if (loading) return null;
+  if (!isLoggedIn) return null;
 
 
   return (

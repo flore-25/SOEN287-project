@@ -36,7 +36,7 @@ function SignupBox() {
     .then(text => {
       console.log("raw response test: ", text);
       const data = JSON.parse(text);
-      window.location.href = data.redirect;
+      navigate(data.redirect);
     })
     .catch(error => {
       if(error.responseJson) {

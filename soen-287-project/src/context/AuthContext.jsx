@@ -9,12 +9,22 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     fetch('/login/me', {
-      credentials: 'include'
+      credentials: 'include',
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
     })
-    .then(res => res.ok ? res.json() : null)
+    .then(res => {
+      if (res.ok || res.status === 304) {
+        console.log("all good");
+        return res.json();
+      }
+      return null;
+    })
     .then(data => {
       if (data?.user) setUser(data.user);
     })
+    .catch(() => setUser(null))
     .finally(() => setLoading(false));
   }, []);
 
@@ -23,8 +33,14 @@ export function AuthProvider({ children }) {
   }, [])
 
   const logout = useCallback(() => {
-    setUser(null)
-  }, [])
+    return fetch('/logout', {
+      method: 'POST',
+      credentials: 'include'
+    })
+    .then(() => {
+      setUser(null);
+    });
+  }, []); 
 
   const value = { user, login, logout, isLoggedIn: !!user, loading }
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

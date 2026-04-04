@@ -174,7 +174,18 @@ app.post('/signup/password', function(req, res, next) {
   });
 });
 
+app.post('/logout', (req, res, next) => {
+  req.logout(function(err) {
+    if(err) { return next(err); }
+    req.session.destroy(function(err) {
+      if(err) { return next(err); }
+      res.json({ redirect: ROUTES.LOGIN});
+    });
+  });
+});
+
 app.get('/login/me', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
   console.log("session:", req.session);
   console.log("isAuthenticated:", req.isAuthenticated());
   console.log("user:", req.user);

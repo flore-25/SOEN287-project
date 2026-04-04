@@ -1,72 +1,110 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import "./charts.css";
-
-
-const courses = ["ENGR 233", "SOEN 287", "COMP 249", "SOEN 228", "ENGR 201"];
-
-const colors = {
-  "ENGR 233": "#f5c842",
-  "SOEN 287": "#42c8f5",
-  "COMP 249": "#a8d672",
-  "SOEN 228": "#f57fa0",
-  "ENGR 201": "#d4e86a",
-};
-
-const grades = {
-  "ENGR 233": 88,
-  "SOEN 287": 38,
-  "COMP 249": 65,
-  "SOEN 228": 27,
-  "ENGR 201": 82,
-};
-
-const assessments = {
-  "ENGR 233": [
-    { name: "Quiz 1", grade: 55 },
-    { name: "A1", grade: 30 },
-    { name: "Midterm", grade: 18 },
-    { name: "A2", grade: 100 },
-    { name: "A3", grade: 78 },
-  ],
-  "SOEN 287": [
-    { name: "Quiz 1", grade: 72 },
-    { name: "A1", grade: 45 },
-    { name: "Midterm", grade: 38 },
-    { name: "A2", grade: 80 },
-    { name: "Project", grade: 91 },
-  ],
-  "COMP 249": [
-    { name: "Quiz 1", grade: 60 },
-    { name: "A1", grade: 75 },
-    { name: "Midterm", grade: 65 },
-    { name: "A2", grade: 85 },
-    { name: "Final", grade: 70 },
-  ],
-  "SOEN 228": [
-    { name: "Quiz 1", grade: 40 },
-    { name: "A1", grade: 22 },
-    { name: "Midterm", grade: 27 },
-    { name: "A2", grade: 50 },
-    { name: "Final", grade: 60 },
-  ],
-  "ENGR 201": [
-    { name: "Quiz 1", grade: 80 },
-    { name: "A1", grade: 85 },
-    { name: "Midterm", grade: 70 },
-    { name: "A2", grade: 82 },
-    { name: "Final", grade: 88 },
-  ],
-};
-
+import { useAuth } from "./context/AuthContext";
+import { ROLES } from "./constants";
+ 
+// fallback colors for courses
+const colorPalette = [
+  "#f5c842", "#42c8f5", "#a8d672", "#f57fa0", "#d4e86a",
+  "#f5a742", "#42f5a7", "#a772f5", "#f57272", "#72f5f5",
+];
+ 
 export default function Progress() {
-  const [selectedCourse, setSelectedCourse] = useState("ENGR 233");
-
+  const { user } = useAuth();
+  const isAdmin = user?.role === ROLES.ADMINISTRATOR;
+ 
+  const [courses, setCourses] = useState([]);
+  const [grades, setGrades] = useState({});
+  const [assessments, setAssessments] = useState({});
+  const [colors, setColors] = useState({});
+  const [selectedCourse, setSelectedCourse] = useState("");
+  const [loading, setLoading] = useState(true);
+ 
+  useEffect(() => {
+    if (isAdmin) {
+      // ADMIN: fetch averages across all students
+      
+      fetch("/api/admin/averages")
+        .then((res) => res.json())
+        .then((data) => {
+          // data = [{ course: "SOEN 287", average: 72.5 }, ...]
+          const courseList = data.map((d) => d.course);
+          const gradesMap = {};
+          const colorsMap = {};
+ 
+          data.forEach((d, i) => {
+            gradesMap[d.course] = Math.round(d.average);
+            colorsMap[d.course] = colorPalette[i % colorPalette.length];
+          });
+ 
+          setCourses(courseList);
+          setGrades(gradesMap);
+          setColors(colorsMap);
+          if (courseList.length > 0) setSelectedCourse(courseList[0]);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch admin averages", err);
+          setLoading(false);
+        });
+    } else {
+      // STUDENT: fetch their own grades
+      Promise.all([
+        fetch("/api/averages").then((res) => res.json()),
+        fetch("/api/grades").then((res) => res.json()),
+      ])
+        .then(([averagesData, gradesData]) => {
+          const courseList = averagesData.map((d) => d.course);
+          const gradesMap = {};
+          const colorsMap = {};
+          const assessmentsMap = {};
+ 
+          averagesData.forEach((d, i) => {
+            gradesMap[d.course] = Math.round(d.average);
+            colorsMap[d.course] = colorPalette[i % colorPalette.length];
+          });
+ 
+          // group grades by course for line chart
+          gradesData.forEach((d) => {
+            if (!assessmentsMap[d.course]) assessmentsMap[d.course] = [];
+            assessmentsMap[d.course].push({ name: d.name, grade: d.grade });
+          });
+ 
+          setCourses(courseList);
+          setGrades(gradesMap);
+          setColors(colorsMap);
+          setAssessments(assessmentsMap);
+          if (courseList.length > 0) setSelectedCourse(courseList[0]);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch grades", err);
+          setLoading(false);
+        });
+    }
+  }, [isAdmin]);
+ 
+  if (loading) {
+    return <div className="page-content"><p>Loading...</p></div>;
+  }
+ 
+  if (courses.length === 0) {
+    return (
+      <div className="page-content">
+        <h1>My Progress</h1>
+        <p style={{ marginTop: "20px", color: "#888" }}>No course data found.</p>
+      </div>
+    );
+  }
+ 
   return (
     <div className="page-content">
       <h1>My Progress</h1>
+ 
+      {/* Bar chart - same structure as before */}
       <div className="card">
-        <h2>Summary WINTER 2026</h2>
+        <h2>{isAdmin ? "All Courses - Student Averages" : "Summary WINTER 2026"}</h2>
         <div className="bars-row">
           {courses.map((course) => (
             <div className="bar-item" key={course}>
@@ -85,24 +123,32 @@ export default function Progress() {
           ))}
         </div>
       </div>
-
-      
-      <div className="card">
-        <h2>Summary {selectedCourse}</h2>
-        <select onChange={(e) => setSelectedCourse(e.target.value)}>
-          {courses.map((c) => (
-            <option key={c}>{c}</option>
-          ))}
-        </select>
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={assessments[selectedCourse]}>
-            <XAxis dataKey="name" />
-            <YAxis domain={[0, 100]} />
-            <Tooltip />
-            <Line type="linear" dataKey="grade" stroke={colors[selectedCourse]} strokeWidth={2} dot={true} />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+ 
+      {/* Line chart - same structure as before, hidden for admin */}
+      {!isAdmin && (
+        <div className="card">
+          <h2>Summary {selectedCourse}</h2>
+          <select onChange={(e) => setSelectedCourse(e.target.value)}>
+            {courses.map((c) => (
+              <option key={c}>{c}</option>
+            ))}
+          </select>
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={assessments[selectedCourse] || []}>
+              <XAxis dataKey="name" />
+              <YAxis domain={[0, 100]} />
+              <Tooltip />
+              <Line
+                type="linear"
+                dataKey="grade"
+                stroke={colors[selectedCourse]}
+                strokeWidth={2}
+                dot={true}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </div>
   );
 }

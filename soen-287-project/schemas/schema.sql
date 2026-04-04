@@ -16,7 +16,8 @@ create table if not exists user(
     role_id integer not null,
     name text not null,
     email text not null,
-    hashedPassword text not null,
+    hashedPassword blob not null,
+    salt blob not null,
     role integer not null,
     foreign key(role) references user_role(role)
 );

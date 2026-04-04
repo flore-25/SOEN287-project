@@ -15,10 +15,10 @@
 		"sqlRemote": "npx wrangler d1 execute website-db --remote --file=./schemas/schema.sql"
 	},
 	"dependencies": {
-		"@types/express": "^5.0.6",
+		"@types/express": "^4.17.25",
 		"bcryptjs": "^3.0.3",
 		"cors": "^2.8.6",
-		"express": "^5.2.1",
+		"express": "^4.22.1",
 		"express-session": "^1.19.0",
 		"passport": "^0.7.0",
 		"passport-local": "^1.0.0",

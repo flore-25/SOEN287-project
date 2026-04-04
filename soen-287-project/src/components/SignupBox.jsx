@@ -16,12 +16,35 @@ function SignupBox() {
   const handleSubmit = (e) => {
     e.preventDefault()
     // Demo: log in as student. Replace with API call and role from backend later.
-    login({
-      id: 'demo-user-1',
-      email: email || 'student@example.com',
-      role: ROLES.STUDENT,
+    
+    const dataOut = {
+      name: name,
+      email: email,
+      password: password
+    };
+     fetch('/signup/password', {
+      method: "POST",
+      credentials: 'include',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(dataOut)
     })
-    navigate(ROUTES.DASHBOARD)
+    .then(response => {
+      return response.text();
+    })
+    .then(text => {
+      console.log("raw response test: ", text);
+      const data = JSON.parse(text);
+      window.location.href = data.redirect;
+    })
+    .catch(error => {
+      if(error.responseJson) {
+        alert(error.responseJson.message);
+      } else {
+        console.error('There has been an error: ', error);
+      }
+    });
   }
 
   return (

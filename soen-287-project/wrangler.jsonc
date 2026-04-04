@@ -28,6 +28,13 @@
 			"database_name": "website-db",
 			"database_id": "0c66c156-d791-470e-8876-303e2c4dfbf7"
 		}
+	],
+	"kv_namespaces": [
+		{
+			"binding": "SESSION_STORE",
+			"id": "d9a342f23abe4ec1bc1748901f36c646",
+			"preview_id": "aa76d48820fc450982cf29f1173efa60"
+		}
 	]
 	/**
 	 * Smart Placement

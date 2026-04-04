@@ -10,7 +10,7 @@ function LandingPage() {
   const navigate = useNavigate()
   const { isLoggedIn } = useAuth()
 
-  fetch('http://127.0.0.1:8787/api')
+  fetch('/api')
     .then(response =>
     {
       console.log("fetching...");

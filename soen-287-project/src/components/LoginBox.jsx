@@ -19,8 +19,9 @@ function LoginBox() {
       email: email,
       password: password
     };
-     fetch('http://127.0.0.1:8787/login/password', {
+     fetch('/login/password', {
       method: "POST",
+      credentials: 'include',
       headers: {
         "Content-Type": "application/json"
       },
@@ -39,7 +40,7 @@ function LoginBox() {
       return response.json();
     })
     .then(data => {
-    console.log(data.message);
+    window.location.href = data.redirect;
     })
     .catch(error =>
     {

@@ -16,7 +16,7 @@ function nextId() {
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const { isLoggedIn } = useAuth()
+  const { isLoggedIn, loading } = useAuth()
   const isStudent = useIsStudent()
   const { courses, setCourses } = useCourses()
 
@@ -26,7 +26,7 @@ export default function Dashboard() {
     if (!isLoggedIn) {
       navigate(ROUTES.LOGIN, { replace: true })
     }
-  }, [isLoggedIn, navigate])
+  }, [isLoggedIn, loading, navigate])
 
   // Ensure body has no landing-page class so global layout isn’t constrained
   useEffect(() => {
@@ -37,11 +37,7 @@ export default function Dashboard() {
     }
   }, [])
 
-  if (!isLoggedIn) {
-    return null
-  }
-
-  const openAdd = useCallback(() => setFormState({ open: true, course: null }), [])
+const openAdd = useCallback(() => setFormState({ open: true, course: null }), [])
   const openEdit = useCallback((course) => setFormState({ open: true, course }), [])
   const closeForm = useCallback(() => setFormState({ open: false, course: null }), [])
 
@@ -62,6 +58,11 @@ export default function Dashboard() {
   const handleRemove = useCallback((course) => {
     setCourses((prev) => prev.filter((c) => c.id !== course.id))
   }, [])
+
+  if (loading || !isLoggedIn) {
+    return null
+  }
+
 
   return (
     <div className="dashboard">

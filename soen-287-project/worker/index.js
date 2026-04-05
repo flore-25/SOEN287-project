@@ -4,6 +4,7 @@ import express from "express";
 import cors from "cors";
 import { Strategy as LocalStrategy } from 'passport-local'
 import crypto from "node:crypto"
+import { Buffer } from "node:buffer"
 import { ROUTES} from "../src/constants"
 import passport from 'passport'
 import session from 'express-session'
@@ -13,12 +14,38 @@ const app = express();
 const corsOptions = {
   origin: 'http://localhost:5173',
   credentials: true,
-  methods: ['GET', 'POST', "PUT", "DELETE", "OPTIONS"],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ["Content-Type", "Authorization"]
 };
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: false}));
 app.use(express.json());
+
+function toPublicUser(row) {
+  if (!row) return null;
+  return {
+    user_id: row.user_id,
+    role_id: row.role_id,
+    role: row.role,
+    name: row.name,
+    email: row.email,
+  };
+}
+
+function verifyPasswordAgainstRow(row, password) {
+  return new Promise((resolve, reject) => {
+    if (!row || password === undefined || password === null) return resolve(false);
+    const pwd = String(password);
+    crypto.pbkdf2(pwd, Buffer.from(row.salt), 310000, 32, 'sha256', (err, hashedPassword) => {
+      if (err) return reject(err);
+      try {
+        resolve(crypto.timingSafeEqual(Buffer.from(row.hashedPassword), hashedPassword));
+      } catch {
+        resolve(false);
+      }
+    });
+  });
+}
 
 function KVStore(options) {
   this.client = options.client;
@@ -137,6 +164,16 @@ app.post('/login/password', (req, res, next) => {
 });
 
 app.post('/signup/password', function(req, res, next) {
+  const roleRaw = req.body.role;
+  let roleId = 0;
+  if (roleRaw === 1 || roleRaw === '1') {
+    roleId = 1;
+  } else if (roleRaw === 0 || roleRaw === '0' || roleRaw === undefined || roleRaw === null || roleRaw === '') {
+    roleId = 0;
+  } else {
+    return res.status(400).json({ message: 'Invalid account type.' });
+  }
+
   const salt = crypto.randomBytes(16);
 
   crypto.pbkdf2(req.body.password, salt, 310000, 32, 'sha256', async function(err, hashedPassword) {
@@ -146,7 +183,7 @@ app.post('/signup/password', function(req, res, next) {
       await env.DB.prepare(
         "insert into user(role_id, name, email, hashedPassword, salt, role) values (?, ?, ?, ?, ?, ?)"
       )
-        .bind(req.body.roleID, req.body.name, req.body.email, hashedPassword, salt, req.body.role === "student" ? 0 : 1)
+        .bind(req.body.roleID, req.body.name, req.body.email, hashedPassword, salt, req.body.role)
         .run();
 
       const user = await env.DB.prepare(
@@ -190,9 +227,112 @@ app.get('/login/me', (req, res) => {
   console.log("isAuthenticated:", req.isAuthenticated());
   console.log("user:", req.user);
   if(req.isAuthenticated()) {
-    res.json({ user: req.user });
+    res.json({ user: toPublicUser(req.user) });
   } else {
     res.status(401).json({ user: null});
+  }
+});
+
+app.patch('/api/account/profile', async (req, res, next) => {
+  if (!req.user) return res.status(401).json({ message: 'Not logged in' });
+  try {
+    const name = String(req.body.name ?? '').trim();
+    const email = String(req.body.email ?? '').trim().toLowerCase();
+    if (!name || !email) {
+      return res.status(400).json({ message: 'Name and email are required.' });
+    }
+    const simpleEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!simpleEmail.test(email)) {
+      return res.status(400).json({ message: 'Invalid email address.' });
+    }
+    const other = await env.DB.prepare(
+      'SELECT user_id FROM user WHERE lower(email) = ? AND user_id != ?'
+    ).bind(email, req.user.user_id).first();
+    if (other) {
+      return res.status(409).json({ message: 'That email is already in use.' });
+    }
+    await env.DB.prepare(
+      'UPDATE user SET name = ?, email = ? WHERE user_id = ?'
+    ).bind(name, email, req.user.user_id).run();
+    const updated = await env.DB.prepare('SELECT * FROM user WHERE user_id = ?').bind(req.user.user_id).first();
+    req.login(updated, (err) => {
+      if (err) return next(err);
+      req.session.save((saveErr) => {
+        if (saveErr) return next(saveErr);
+        res.json({ user: toPublicUser(updated) });
+      });
+    });
+  } catch (e) {
+    next(e);
+  }
+});
+
+app.patch('/api/account/password', (req, res, next) => {
+  if (!req.user) return res.status(401).json({ message: 'Not logged in' });
+  const newPwd = String(req.body.newPassword ?? '');
+  if (newPwd.length < 8) {
+    return res.status(400).json({ message: 'New password must be at least 8 characters.' });
+  }
+  const userId = req.user.user_id;
+  env.DB.prepare('SELECT * FROM user WHERE user_id = ?').bind(userId).first()
+    .then((row) => verifyPasswordAgainstRow(row, req.body.currentPassword))
+    .then((ok) => {
+      if (!ok) {
+        return res.status(401).json({ message: 'Current password is incorrect.' });
+      }
+      const salt = crypto.randomBytes(16);
+      crypto.pbkdf2(newPwd, salt, 310000, 32, 'sha256', async (err, hashedPassword) => {
+        if (err) return next(err);
+        try {
+          await env.DB.prepare(
+            'UPDATE user SET hashedPassword = ?, salt = ? WHERE user_id = ?'
+          ).bind(hashedPassword, salt, userId).run();
+          const updated = await env.DB.prepare('SELECT * FROM user WHERE user_id = ?').bind(userId).first();
+          req.login(updated, (e) => {
+            if (e) return next(e);
+            req.session.save((se) => {
+              if (se) return next(se);
+              res.json({ ok: true });
+            });
+          });
+        } catch (e) {
+          next(e);
+        }
+      });
+    })
+    .catch(next);
+});
+
+app.post('/api/account/delete', async (req, res, next) => {
+  if (!req.user) return res.status(401).json({ message: 'Not logged in' });
+  const userId = req.user.user_id;
+  try {
+    const row = await env.DB.prepare('SELECT * FROM user WHERE user_id = ?').bind(userId).first();
+    const ok = await verifyPasswordAgainstRow(row, req.body.currentPassword);
+    if (!ok) {
+      return res.status(401).json({ message: 'Password is incorrect.' });
+    }
+    const profCourses = await env.DB.prepare('SELECT course_id FROM course WHERE prof_id = ?').bind(userId).all();
+    const courses = profCourses.results || [];
+    for (const c of courses) {
+      const cid = c.course_id;
+      await env.DB.prepare('DELETE FROM student_assignment WHERE course_id = ?').bind(cid).run();
+      await env.DB.prepare('DELETE FROM assignment WHERE course_id = ?').bind(cid).run();
+      await env.DB.prepare('DELETE FROM student_course WHERE course_id = ?').bind(cid).run();
+      await env.DB.prepare('DELETE FROM course WHERE course_id = ?').bind(cid).run();
+    }
+    await env.DB.prepare('DELETE FROM student_assignment WHERE user_id = ?').bind(userId).run();
+    await env.DB.prepare('DELETE FROM student_course WHERE user_id = ?').bind(userId).run();
+    await env.DB.prepare('DELETE FROM user WHERE user_id = ?').bind(userId).run();
+    req.logout((err) => {
+      if (err) return next(err);
+      req.session.destroy((e) => {
+        if (e) return next(e);
+        res.json({ redirect: ROUTES.LOGIN });
+      });
+    });
+  } catch (e) {
+    next(e);
   }
 });
 

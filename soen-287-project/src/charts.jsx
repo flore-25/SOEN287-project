@@ -12,7 +12,7 @@ const colorPalette = [
  
 export default function Progress() {
   const { user } = useAuth();
-  const isAdmin = user?.role === ROLES.ADMINISTRATOR;
+  const isAdmin = user?.role === 1 || user?.role === '1' || user?.role === ROLES.ADMINISTRATOR;
  
   const [courses, setCourses] = useState([]);
   const [grades, setGrades] = useState({});

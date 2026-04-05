@@ -7,6 +7,7 @@ export const ROUTES = {
   LOGIN: '/login',
   SIGNUP: '/signup',
   DASHBOARD: '/dashboard',
+  ACCOUNT: '/account',
   COURSE_DETAIL: '/course/:courseId',
   courseDetail: (courseId) => `/course/${courseId}`,
   DEADLINES: '/deadlines',

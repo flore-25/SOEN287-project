@@ -40,9 +40,24 @@ export function AuthProvider({ children }) {
     .then(() => {
       setUser(null);
     });
-  }, []); 
+  }, []);
 
-  const value = { user, login, logout, isLoggedIn: !!user, loading }
+  const replaceUser = useCallback((nextUser) => {
+    setUser(nextUser ?? null);
+  }, []);
+
+  const refreshUser = useCallback(() => {
+    return fetch('/login/me', {
+      credentials: 'include',
+      headers: { 'Cache-Control': 'no-cache' },
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.user) setUser(data.user);
+      });
+  }, []);
+
+  const value = { user, login, logout, replaceUser, refreshUser, isLoggedIn: !!user, loading }
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
@@ -55,5 +70,6 @@ export function useAuth() {
 /** Helper: true if current user is a student (can add/edit/remove courses). */
 export function useIsStudent() {
   const { user } = useAuth()
-  return user?.role === ROLES.STUDENT
+  const r = user?.role
+  return r === 0 || r === '0' || r === ROLES.STUDENT
 }

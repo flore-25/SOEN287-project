@@ -8,6 +8,7 @@ export const NAV = {
   LOGIN: 'Log In',
   SIGN_UP: 'Sign Up',
   LOG_OUT: 'Log out',
+  MY_ACCOUNT: 'My Account',
 }
 
 export const DASHBOARD = {
@@ -29,12 +30,42 @@ export const LOGIN = {
   SUBMIT: 'Log in',
 }
 
+export const MY_ACCOUNT = {
+  PAGE_TITLE: 'My Account',
+  EDIT: 'edit',
+  NAME: 'Name',
+  EMAIL: 'Email address',
+  PASSWORD: 'Password',
+  PASSWORD_MASKED: '***********',
+  ACCOUNT_TYPE: 'Account type',
+  TYPE_STUDENT: 'Student',
+  TYPE_INSTRUCTOR: 'Instructor',
+  SAVE_CHANGES: 'Save Change',
+  CANCEL: 'Cancel',
+  CHANGE_PASSWORD: 'Change password',
+  DELETE_ACCOUNT: 'Delete account',
+  DELETE_WARNING: 'This cannot be undone. All courses you teach and related data will be removed.',
+  MODAL_PASSWORD_CURRENT: 'Current password',
+  MODAL_PASSWORD_NEW: 'New password',
+  MODAL_PASSWORD_CONFIRM: 'Confirm new password',
+  MODAL_DELETE_CONFIRM: 'Type your password to confirm deletion',
+  SUBMIT_PASSWORD: 'Update password',
+  CONFIRM_DELETE: 'Delete my account',
+  CLOSE: 'Close',
+  SAVED: 'Your profile was updated.',
+  PASSWORD_UPDATED: 'Password updated.',
+  MISMATCH: 'New passwords do not match.',
+}
+
 export const SIGN_UP = {
   GREETING: 'Hello!',
   EMAIL_PLACEHOLDER: 'Email Address',
   PASSWORD_PLACEHOLDER: 'Password',
   SUBMIT: 'Sign up',
   NAME: 'John Doe',
+  ACCOUNT_TYPE: 'Account type',
+  STUDENT: 'Student',
+  INSTRUCTOR: 'Instructor',
 }
 
 

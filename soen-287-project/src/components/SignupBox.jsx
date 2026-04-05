@@ -1,24 +1,19 @@
 import { useState } from 'react'
 import { useNavigate, Link} from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-import { ROUTES, ROLES, NAV, SIGN_UP } from '../constants'
+import { ROUTES, NAV, SIGN_UP } from '../constants'
 import '../loginPage.css'
-import { FontAwesomeIcon } from 'react-fontawesome'
-
 
 function SignupBox() {
   const navigate = useNavigate()
-  const { login } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
-  const [role, setRole] = useState('')
-  const [roleID, setRoleID] = useState('')
+  const [roleID, setRoleID] = useState(0)
+  const [role, setRole] = useState(0)
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Demo: log in as student. Replace with API call and role from backend later.
-    
+
     const dataOut = {
       name: name,
       email: email,
@@ -30,25 +25,27 @@ function SignupBox() {
       method: "POST",
       credentials: 'include',
       headers: {
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(dataOut)
+      body: JSON.stringify(dataOut),
     })
-    .then(response => {
-      return response.text();
-    })
-    .then(text => {
-      console.log("raw response test: ", text);
-      const data = JSON.parse(text);
-      navigate(data.redirect);
-    })
-    .catch(error => {
-      if(error.responseJson) {
-        alert(error.responseJson.message);
-      } else {
-        console.error('There has been an error: ', error);
-      }
-    });
+      .then(async (response) => {
+        const text = await response.text()
+        let data
+        try {
+          data = JSON.parse(text)
+        } catch {
+          throw new Error('Invalid response from server')
+        }
+        if (!response.ok) {
+          throw new Error(data.message || 'Sign up failed.')
+        }
+        navigate(data.redirect)
+      })
+      .catch((error) => {
+        alert(error.message || 'There has been an error.')
+        console.error('There has been an error: ', error)
+      })
   }
 
   return (
@@ -95,13 +92,29 @@ function SignupBox() {
           className="passwordField field icon icon-password"
         />
         </div>
-        <div className='input-group'>
-          <label for="role">Role:</label>
-          <select name="role" id="role" required onChange={(e) => setRole(e.target.value)}>
-            <option value="admin">Administrator</option>
-            <option value="student" selected>Student</option>
-          </select>
-        </div>
+        <fieldset className="account-type-fieldset">
+          <legend>{SIGN_UP.ACCOUNT_TYPE}</legend>
+          <div className="account-type-options">
+            <label>
+              <input
+                type="radio"
+                name="accountType"
+                checked={role === 0}
+                onChange={() => setRole(0)}
+              />
+              {SIGN_UP.STUDENT}
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="accountType"
+                checked={role === 1}
+                onChange={() => setRole(1)}
+              />
+              {SIGN_UP.INSTRUCTOR}
+            </label>
+          </div>
+        </fieldset>
         <input type="submit" className="loginButton" value={SIGN_UP.SUBMIT} />
       </form>
       <>

@@ -14,6 +14,7 @@ import { ROUTES } from './constants/index.js'
 import Deadlines from './deadlines.jsx'
 import Charts from './charts.jsx'
 import SignupPage from './signupPage.jsx'
+import MyAccount from './pages/MyAccount.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -85,6 +86,22 @@ createRoot(document.getElementById('root')).render(
                     </div>
                     <div className="app-layout__content">
                       <Charts />
+                    </div>
+                  </div>
+                </div>
+              }
+            />
+            <Route
+              path={ROUTES.ACCOUNT}
+              element={
+                <div className="dashboard-route">
+                  <TopNavBar />
+                  <div className="app-layout">
+                    <div className="app-layout__nav">
+                      <Navbar />
+                    </div>
+                    <div className="app-layout__content">
+                      <MyAccount />
                     </div>
                   </div>
                 </div>

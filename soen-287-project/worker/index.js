@@ -144,9 +144,9 @@ app.post('/signup/password', function(req, res, next) {
 
     try {
       await env.DB.prepare(
-        "insert into user(role_id, name, email, hashedPassword, salt, role) values (0, ?, ?, ?, ?, 0)"
+        "insert into user(role_id, name, email, hashedPassword, salt, role) values (?, ?, ?, ?, ?, ?)"
       )
-        .bind(req.body.name, req.body.email, hashedPassword, salt)
+        .bind(req.body.roleID, req.body.name, req.body.email, hashedPassword, salt, req.body.role === "student" ? 0 : 1)
         .run();
 
       const user = await env.DB.prepare(

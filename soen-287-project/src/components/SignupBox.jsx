@@ -12,6 +12,8 @@ function SignupBox() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
+  const [role, setRole] = useState('')
+  const [roleID, setRoleID] = useState('')
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -20,7 +22,9 @@ function SignupBox() {
     const dataOut = {
       name: name,
       email: email,
-      password: password
+      password: password,
+      role: role,
+      roleID: roleID
     };
      fetch('/signup/password', {
       method: "POST",
@@ -62,6 +66,16 @@ function SignupBox() {
           />
         </div>
         <div className='input-group'>
+          <span className='fa-solid fa-address-card'></span>
+          <input
+            type="roleID"
+            value={roleID}
+            onChange={(e) => setRoleID(e.target.value)}
+            placeholder="Student/Admin ID"
+            className="nameField field icon-placeholder"
+          />
+        </div>
+        <div className='input-group'>
           <span className='fa-solid fa-envelope'></span>
           <input
             type="email"
@@ -80,6 +94,13 @@ function SignupBox() {
           placeholder={SIGN_UP.PASSWORD_PLACEHOLDER}
           className="passwordField field icon icon-password"
         />
+        </div>
+        <div className='input-group'>
+          <label for="role">Role:</label>
+          <select name="role" id="role" required onChange={(e) => setRole(e.target.value)}>
+            <option value="admin">Administrator</option>
+            <option value="student" selected>Student</option>
+          </select>
         </div>
         <input type="submit" className="loginButton" value={SIGN_UP.SUBMIT} />
       </form>

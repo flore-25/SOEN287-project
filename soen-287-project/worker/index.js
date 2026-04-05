@@ -328,21 +328,77 @@ app.get("/api", (req, res) =>{
 
 
 app.get("/api/courses", async (req, res) => {
+  console.log("GET /api/courses - user:", req.user?.user_id, "role:", req.user?.role);
   if (!req.user) return res.status(401).json({ error: "Not logged in" });
 
   try {
     const userId = req.user.user_id;
-    const rows = await env.DB.prepare(`
-      SELECT c.course_id, c.course_code
-      FROM student_course sc
-      JOIN course c ON c.course_id = sc.course_id
-      WHERE sc.user_id = ?
-    `).bind(userId).all();
-
-    res.json(rows.results);
+    let rows;
+    if(req.user.role === 0) {
+      rows = await env.DB.prepare(`
+        SELECT c.course_id, c.course_code, c.term
+        FROM student_course sc
+        JOIN course c ON c.course_id = sc.course_id
+        WHERE sc.user_id = ? and c.enabled = 1
+      `).bind(userId).all();
+    } else {
+      rows = await env.DB.prepare(`
+        select course_id, course_code, term
+        from course
+        where prof_id = ? and enabled = 1
+        `).bind(userId).all();
+    }
+    res.json({ courses: rows.results});
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to get courses" });
+  }
+});
+
+app.post('/api/courses/create', async (req, res, next) => {
+  if(!req.isAuthenticated()) return res.status(401).json({ error: 'Not logged in' });
+  if (req.user.role !== 1) return res.status(403).json({ error: 'Forbidden for students' });
+  try {
+    const { code, term } = req.body;
+    const result = await env.DB.prepare(
+      'insert into course (course_code, term, prof_id, enabled) values (?, ?, ?, 1)'
+    ).bind(code, term, req.user.user_id).run();
+    res.json({ course_id: result.meta.last_row_id });
+  } catch(err) {
+    next(err);
+  }
+});
+
+app.post('/api/courses/enroll', async (req, res, next) => {
+  if (!req.isAuthenticated()) return res.status(401).json({ error: 'Not logged in' });
+  if (req.user.role !== 0) return res.status(403).json({ error: 'Forbidden for admin' });
+  try {
+    const { course_id } = req.body;
+    await env.DB.prepare(
+      'insert into student_course (user_id, course_id, average) values (?, ?, 0)'
+    ).bind(req.user.user_id, course_id).run();
+    res.json({ success: true });
+  } catch(err) {
+    next(err);
+  }
+});
+
+app.post('/api/courses/remove', async (req, res, next) => {
+  if (!req.isAuthenticated()) return res.status(401).json({ error: 'Not logged in' });
+  try {
+    const { course_id } = req.body;
+    if (req.user.role === 0) {
+      await env.DB.prepare(
+        'delete from student_course where user_id = ? and course_id = ?'
+      ).bind(req.user.user_id, course_id).run();
+    } else {
+      await env.DB.prepare(
+        'update course set enabled = 0 WHERE course_id = ? and prof_id = ?'
+      ).bind(course_id, req.user.user_id).run();
+    }
+    res.json({ success: true });
+  } catch(err) {
+    next(err);
   }
 });
 

@@ -26,7 +26,9 @@ export default function Deadlines() {
  
   // fetch deadlines and courses on page load
   useEffect(() => {
-    fetch("/api/deadlines")
+    fetch("/api/deadlines", {
+      credentials: 'include'
+    })
       .then((res) => res.json())
       .then((data) => {
         const mapped = data.map((d) => ({
@@ -46,9 +48,11 @@ export default function Deadlines() {
         setLoading(false);
       });
  
-    fetch("/api/courses")
+    fetch("/api/courses", {
+      credentials: 'include'
+    })
       .then((res) => res.json())
-      .then((data) => setCourses(data))
+      .then((data) => setCourses(data.courses ?? data))
       .catch((err) => console.error("Failed to fetch courses", err));
   }, []);
  

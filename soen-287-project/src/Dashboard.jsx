@@ -23,6 +23,7 @@ export default function Dashboard() {
   const [formState, setFormState] = useState({ open: false, course: null })
 
   useEffect(() => {
+    if(loading) return;
     if (!isLoggedIn) {
       navigate(ROUTES.LOGIN, { replace: true })
     }
@@ -38,30 +39,85 @@ export default function Dashboard() {
   }, [])
 
 const openAdd = useCallback(() => setFormState({ open: true, course: null }), [])
-  const openEdit = useCallback((course) => setFormState({ open: true, course }), [])
-  const closeForm = useCallback(() => setFormState({ open: false, course: null }), [])
+const openEdit = useCallback((course) => setFormState({ open: true, course }), [])
+const closeForm = useCallback(() => setFormState({ open: false, course: null }), [])
 
-  const handleSave = useCallback(
-    (values) => {
-      if (formState.course?.id) {
-        setCourses((prev) =>
-          prev.map((c) => (c.id === formState.course.id ? { ...c, ...values } : c))
-        )
+const handleSave = useCallback((values) => {
+  const url = isStudent ? '/api/courses/enroll' : '/api/courses/create';
+  fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(values)
+  })
+  .then(res => res.ok ? res.json() : null)
+  .then(() => fetch('/api/courses', {
+    credentials: 'include',
+    headers: { 'Cache-Control': 'no-cache' }
+  }))
+  .then(res => res.ok ? res.json() : null)
+  .then(data => {
+    console.log("courses data:", data);
+    if (data?.courses) {
+      setCourses(data.courses.map(c => ({
+          ...c,
+          id: String(c.course_id),
+          code: c.course_code,
+          instructor: c.instructor ?? '',
+          term: c.term ?? '',
+        })));
+    }
+    closeForm();
+  })
+  .catch(err => console.error('Failed to save course:', err));
+}, [formState.course, closeForm, isStudent]);
+
+const handleRemove = useCallback((course) => {
+  fetch('/api/courses/remove', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ course_id: course.course_id })
+  })
+  .then(res => res.ok ? res.json() : null)
+  .then(() => {
+    setCourses(prev => prev.filter(c => c.course_id !== course.course_id));
+  })
+  .catch(err => console.error('Failed to remove course:', err));
+}, []);
+
+useEffect(() => {
+  if (loading || !isLoggedIn) return;
+  fetch('/api/courses', {
+    credentials: 'include',
+    headers: { 'Cache-Control': 'no-cache' }
+  })
+  .then(res => res.ok ? res.json() : null)
+  .then(data => {
+    console.log("courses data:", data);
+    if (data?.courses)
+      {
+        setCourses(data.courses.map(c => ({
+          ...c,
+          id: String(c.course_id),
+          code: c.course_code,
+          instructor: c.instructor ?? '',
+          term: c.term ?? '',
+        })));
+        console.log("setting courses:", mapped);
+        setCourses(mapped);
+        console.log("setCourses called");
       } else {
-        setCourses((prev) => [...prev, { ...values, id: nextId() }])
-      }
-      closeForm()
-    },
-    [formState.course, closeForm]
-  )
+      console.log("no courses in data");
+    }
+  })
+  .catch(err => console.error('Failed to load courses:', err));
+}, [isLoggedIn, loading]);
 
-  const handleRemove = useCallback((course) => {
-    setCourses((prev) => prev.filter((c) => c.id !== course.id))
-  }, [])
+console.log("rendering courses:", courses);
 
   if (loading) return null;
   if (!isLoggedIn) return null;
-
 
   return (
     <div className="dashboard">
@@ -77,7 +133,7 @@ const openAdd = useCallback(() => setFormState({ open: true, course: null }), []
         <div className="dashboard__grid">
           {courses.map((course) => (
             <CourseCard
-              key={course.id}
+              key={course.course_id}
               course={course}
               onEdit={() => openEdit(course)}
               onRemove={() => handleRemove(course)}

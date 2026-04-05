@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { COURSE_FORM } from '../constants'
 import '../styles/courseForm.css'
 
-const emptyCourse = { courseID: '' }
+const emptyCourse = { course_id: '' }
 
 /**
  * Single form for both add and edit. initialCourse null = add; object = edit.
@@ -23,11 +23,9 @@ export default function CourseFormStudent({ initialCourse, onSubmit, onCancel })
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (!form.code?.trim()) return
+    if (!form.course_id?.trim()) return
     const payload = {
-      code: form.code.trim(),
-      instructor: form.instructor?.trim() || '',
-      term: form.term?.trim() || '',
+      course_id: form.course_id.trim(),
     }
     if (initialCourse?.id) payload.id = initialCourse.id
     onSubmit(payload)
@@ -44,8 +42,8 @@ export default function CourseFormStudent({ initialCourse, onSubmit, onCancel })
             {COURSE_FORM.COURSE_ID}
             <input
               type="text"
-              value={form.code}
-              onChange={handleChange('courseID')}
+              value={form.course_id ?? ''}
+              onChange={handleChange('course_id')}
               placeholder={COURSE_FORM.ID_PLACEHOLDER}
               required
               className="course-form__input"

@@ -54,10 +54,8 @@ function KVStore(options) {
 KVStore.prototype.__proto__ = session.Store.prototype;
 
 KVStore.prototype.get = async function(sid, callback) {
-  console.log("KVStore.get:", sid);
   try {
     const data = await this.client.get(`sess:${sid}`);
-    console.log("KVStore.get result:", data);
     callback(null, data ? JSON.parse(data) : null);
   } catch(err) {
     console.log("KVStore.get error:", err);
@@ -66,11 +64,9 @@ KVStore.prototype.get = async function(sid, callback) {
 };
 
 KVStore.prototype.set = async function(sid, session, callback) {
-  console.log("KVStore.set:", sid, JSON.stringify(session));
   try {
     const ttl = session.cookie.maxAge ? Math.floor(session.cookie.maxAge / 1000) : 86400;
     await this.client.put(`sess:${sid}`, JSON.stringify(session), { expirationTtl: ttl });
-    console.log("KVStore.set success");
     callback(null);
   } catch(err) {
     console.log("KVStore.set error:", err);
@@ -79,7 +75,6 @@ KVStore.prototype.set = async function(sid, session, callback) {
 };
 
 KVStore.prototype.destroy = async function(sid, callback) {
-  console.log("KVStore.destroy:", sid);
   try {
     await this.client.delete(`sess:${sid}`);
     callback(null);
@@ -116,7 +111,6 @@ passport.deserializeUser(async (id, done) => {
   const user = await env.DB.prepare("select * from user where user_id = ?")
     .bind(id)
     .first();
-  console.log("deserializing id:", id, "found user:", user);
   done(null, user);
 })
 
@@ -142,7 +136,6 @@ passport.use(new LocalStrategy(
     })
     .catch((err) =>
     {
-      console.log("Error here");
       return cb(err);
     });
 }));
@@ -193,14 +186,10 @@ app.post('/signup/password', function(req, res, next) {
         .first();
 
       req.login(user, function(err) {
-        console.log("req.login called, err:", err);
         if (err) { return next(err); }
         req.session.save(function(err) {
-          console.log("set-cookie header:", res.getHeader('Set-Cookie'));
-           console.log("session saved, err:", err);
           if(err) { return next(err); }
           const payload = JSON.stringify({ redirect: ROUTES.DASHBOARD});
-          console.log("sending payload:", JSON.stringify(payload)); 
           res.setHeader('Content-Type', 'application/json');
           res.end(payload);
         });
@@ -223,9 +212,6 @@ app.post('/logout', (req, res, next) => {
 
 app.get('/login/me', (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
-  console.log("session:", req.session);
-  console.log("isAuthenticated:", req.isAuthenticated());
-  console.log("user:", req.user);
   if(req.isAuthenticated()) {
     res.json({ user: toPublicUser(req.user) });
   } else {

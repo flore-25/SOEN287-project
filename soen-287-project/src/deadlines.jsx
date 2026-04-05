@@ -5,29 +5,13 @@ export default function Deadlines() {
   const [deadlines, setDeadlines] = useState([]);
   const [activeFilter, setActiveFilter] = useState("All");
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [courses, setCourses] = useState([]);
-  const [newDeadline, setNewDeadline] = useState({
-    course_id: "",
-    assn_desc: "",
-    assn_type: 3,
-    due_date: "",
-    weight: "",
-  });
  
   const filters = ["All", "Pending", "Completed", "Overdue"];
  
-  const assignmentTypes = [
-    { value: 0, label: "Quiz" },
-    { value: 1, label: "Lab" },
-    { value: 2, label: "Exam" },
-    { value: 3, label: "Assignment" },
-  ];
- 
-  // fetch deadlines and courses on page load
+  // fetch deadlines on page load
   useEffect(() => {
     fetch("/api/deadlines", {
-      credentials: 'include'
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => {
@@ -47,13 +31,6 @@ export default function Deadlines() {
         console.error("Failed to fetch deadlines", err);
         setLoading(false);
       });
- 
-    fetch("/api/courses", {
-      credentials: 'include'
-    })
-      .then((res) => res.json())
-      .then((data) => setCourses(data.courses ?? data))
-      .catch((err) => console.error("Failed to fetch courses", err));
   }, []);
  
   function mapStatus(status) {
@@ -75,6 +52,7 @@ export default function Deadlines() {
     fetch(`/api/deadlines/${id}/complete`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ course_id: deadline.course_id }),
     })
       .then((res) => res.json())
@@ -91,6 +69,7 @@ export default function Deadlines() {
     fetch(`/api/deadlines/${id}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ course_id: deadline.course_id }),
     })
       .then((res) => res.json())
@@ -98,36 +77,6 @@ export default function Deadlines() {
         setDeadlines((prev) => prev.filter((d) => d.id !== id));
       })
       .catch((err) => console.error("Failed to delete deadline", err));
-  };
- 
-  const handleAddDeadline = () => {
-    if (!newDeadline.course_id || !newDeadline.assn_desc || !newDeadline.due_date || !newDeadline.weight) {
-      alert("Please fill in all fields!");
-      return;
-    }
- 
-    fetch("/api/deadlines", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newDeadline),
-    })
-      .then((res) => res.json())
-      .then(() => {
-        const course = courses.find((c) => c.course_id === parseInt(newDeadline.course_id));
-        const added = {
-          id: Date.now(),
-          course_id: newDeadline.course_id,
-          title: newDeadline.assn_desc,
-          course: course ? course.course_code : "Unknown Course",
-          due: newDeadline.due_date,
-          marks: newDeadline.weight + " Marks",
-          status: "pending",
-        };
-        setDeadlines((prev) => [...prev, added]);
-        setNewDeadline({ course_id: "", assn_desc: "", assn_type: 3, due_date: "", weight: "" });
-        setShowForm(false);
-      })
-      .catch((err) => console.error("Failed to add deadline", err));
   };
  
   if (loading) {
@@ -148,79 +97,7 @@ export default function Deadlines() {
             {f}
           </button>
         ))}
-        <button className="filter-bttns" onClick={() => setShowForm(!showForm)}>
-          {showForm ? "Cancel" : "+ Add Deadline"}
-        </button>
       </div>
- 
-      {showForm && (
-        <div className="deadline-form">
-          <h3>New Deadline</h3>
- 
-          <div className="form-group">
-            <label>Title</label>
-            <input
-              type="text"
-              placeholder="e.g. Assignment 1"
-              value={newDeadline.assn_desc}
-              onChange={(e) => setNewDeadline({ ...newDeadline, assn_desc: e.target.value })}
-            />
-          </div>
- 
-          <div className="form-group">
-            <label>Course</label>
-            <select
-              value={newDeadline.course_id}
-              onChange={(e) => setNewDeadline({ ...newDeadline, course_id: e.target.value })}
-            >
-              <option value="">Select a course</option>
-              {courses.map((c) => (
-                <option key={c.course_id} value={c.course_id}>
-                  {c.course_code}
-                </option>
-              ))}
-            </select>
-          </div>
- 
-          <div className="form-group">
-            <label>Type</label>
-            <select
-              value={newDeadline.assn_type}
-              onChange={(e) => setNewDeadline({ ...newDeadline, assn_type: parseInt(e.target.value) })}
-            >
-              {assignmentTypes.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
-              ))}
-            </select>
-          </div>
- 
-          <div className="form-group">
-            <label>Due Date</label>
-            <input
-              type="date"
-              value={newDeadline.due_date}
-              onChange={(e) => setNewDeadline({ ...newDeadline, due_date: e.target.value })}
-            />
-          </div>
- 
-          <div className="form-group">
-            <label>Weight / Marks</label>
-            <input
-              type="number"
-              placeholder="e.g. 20"
-              value={newDeadline.weight}
-              onChange={(e) => setNewDeadline({ ...newDeadline, weight: e.target.value })}
-            />
-          </div>
- 
-          <button className="detail-bttns" onClick={handleAddDeadline}>
-            Add Deadline
-          </button>
-          <button className="detail-bttns" onClick={() => setShowForm(false)}>
-            Cancel
-          </button>
-        </div>
-      )}
  
       <div className="deadlines-container">
         {filtered.length === 0 && (

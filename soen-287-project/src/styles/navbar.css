@@ -66,3 +66,47 @@
 .navbar-right .nav-logout-button:hover {
   opacity: 0.9;
 }
+
+.navbar-authed {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.25rem;
+  font-size: 0.95rem;
+}
+
+.navbar-authed__logout {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  color: #888;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
+}
+
+.navbar-authed__logout:hover {
+  color: #555;
+  text-decoration: underline;
+}
+
+.navbar-authed__sep {
+  color: #bbb;
+  font-weight: 400;
+}
+
+.navbar-authed__account {
+  color: #1a1a1a;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.navbar-authed__account:hover {
+  text-decoration: underline;
+}
+
+.navbar-authed__account--active {
+  color: #2db8c4;
+}

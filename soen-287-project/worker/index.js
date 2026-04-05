@@ -561,6 +561,43 @@ app.get("/api/admin/averages", async (req, res) => {
   }
 });
 
+app.post("/api/deadlines", async (req, res) => {
+  if (!req.user) return res.status(401).json({ error: "Not logged in" });
+
+  try {
+    const { course_id, assn_desc, assn_type, due_date, weight } = req.body;
+
+    await env.DB.prepare(`
+      INSERT INTO assignment (course_id, assn_desc, assn_type, due_date, weight)
+      VALUES (?, ?, ?, ?, ?)
+    `).bind(course_id, assn_desc, assn_type, due_date, weight).run();
+
+    res.status(201).json({ message: "Deadline added successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to add deadline" });
+  }
+});
+
+app.get("/api/courses", async (req, res) => {
+  if (!req.user) return res.status(401).json({ error: "Not logged in" });
+
+  try {
+    const userId = req.user.user_id;
+    const rows = await env.DB.prepare(`
+      SELECT c.course_id, c.course_code
+      FROM student_course sc
+      JOIN course c ON c.course_id = sc.course_id
+      WHERE sc.user_id = ?
+    `).bind(userId).all();
+
+    res.json(rows.results);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to get courses" });
+  }
+});
+
 app.use((req,res) => {
   console.log("Unmatched route: ", req.method, req.url);
   res.status(404).json({ error: "Not found", path: req.url});

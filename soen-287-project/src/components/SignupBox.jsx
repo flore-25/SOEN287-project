@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link} from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import { ROUTES, NAV, SIGN_UP } from '../constants'
 import '../loginPage.css'
 
@@ -10,6 +11,7 @@ function SignupBox() {
   const [name, setName] = useState('')
   const [roleID, setRoleID] = useState(0)
   const [role, setRole] = useState(0)
+   const { login } = useAuth()
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -29,23 +31,35 @@ function SignupBox() {
       },
       body: JSON.stringify(dataOut),
     })
-      .then(async (response) => {
-        const text = await response.text()
-        let data
-        try {
-          data = JSON.parse(text)
-        } catch {
-          throw new Error('Invalid response from server')
-        }
-        if (!response.ok) {
-          throw new Error(data.message || 'Sign up failed.')
-        }
-        navigate(data.redirect)
-      })
-      .catch((error) => {
-        alert(error.message || 'There has been an error.')
-        console.error('There has been an error: ', error)
-      })
+      .then(res => {
+      console.log("login response status:", res.status);
+      if (!res.ok) {
+        return res.json().then(e => { throw e; });
+      }
+      return res.json();
+    })
+    .then(data => {
+      console.log("login data:", data);
+      return fetch('/login/me', {
+        credentials: 'include',
+        headers: { 'Cache-Control': 'no-cache' }
+      });
+    })
+    .then(res => {
+      console.log("/login/me status:", res.status);
+      return res.ok ? res.json() : null;
+    })
+    .then(data => {
+      console.log("/login/me data:", data);
+      if (data?.user) {
+        login(data.user);
+        navigate(ROUTES.DASHBOARD);
+      }
+    })
+    .catch(error => {
+      console.error("full error:", error);
+      if (error.message) alert(error.message);
+    });
   }
 
   return (

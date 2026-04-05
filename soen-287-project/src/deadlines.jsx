@@ -1,14 +1,34 @@
 import { useState, useEffect } from "react";
 import "./deadlines-Styling.css";
+import { useAuth } from "./context/AuthContext";
+import { ROLES } from "./constants";
  
 export default function Deadlines() {
+  const { user } = useAuth();
+  const isInstructor = user?.role === 1 || user?.role === '1' || user?.role === ROLES.ADMINISTRATOR;
+ 
   const [deadlines, setDeadlines] = useState([]);
   const [activeFilter, setActiveFilter] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [courses, setCourses] = useState([]);
+  const [newDeadline, setNewDeadline] = useState({
+    course_id: "",
+    assn_desc: "",
+    assn_type: 3,
+    due_date: "",
+    weight: "",
+  });
  
   const filters = ["All", "Pending", "Completed", "Overdue"];
  
-  // fetch deadlines on page load
+  const assignmentTypes = [
+    { value: 0, label: "Quiz" },
+    { value: 1, label: "Lab" },
+    { value: 2, label: "Exam" },
+    { value: 3, label: "Assignment" },
+  ];
+ 
   useEffect(() => {
     fetch("/api/deadlines", {
       credentials: "include",
@@ -31,7 +51,17 @@ export default function Deadlines() {
         console.error("Failed to fetch deadlines", err);
         setLoading(false);
       });
-  }, []);
+ 
+    // only fetch courses for instructor (for the add form dropdown)
+    if (isInstructor) {
+      fetch("/api/courses", {
+        credentials: "include",
+      })
+        .then((res) => res.json())
+        .then((data) => setCourses(data.courses ?? data))
+        .catch((err) => console.error("Failed to fetch courses", err));
+    }
+  }, [isInstructor]);
  
   function mapStatus(status) {
     if (!status) return "pending";
@@ -79,6 +109,37 @@ export default function Deadlines() {
       .catch((err) => console.error("Failed to delete deadline", err));
   };
  
+  const handleAddDeadline = () => {
+    if (!newDeadline.course_id || !newDeadline.assn_desc || !newDeadline.due_date || !newDeadline.weight) {
+      alert("Please fill in all fields!");
+      return;
+    }
+ 
+    fetch("/api/deadlines", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(newDeadline),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        const course = courses.find((c) => c.course_id === parseInt(newDeadline.course_id));
+        const added = {
+          id: Date.now(),
+          course_id: newDeadline.course_id,
+          title: newDeadline.assn_desc,
+          course: course ? course.course_code : "Unknown Course",
+          due: newDeadline.due_date,
+          marks: newDeadline.weight + " Marks",
+          status: "pending",
+        };
+        setDeadlines((prev) => [...prev, added]);
+        setNewDeadline({ course_id: "", assn_desc: "", assn_type: 3, due_date: "", weight: "" });
+        setShowForm(false);
+      })
+      .catch((err) => console.error("Failed to add deadline", err));
+  };
+ 
   if (loading) {
     return <div className="page-content"><p>Loading deadlines...</p></div>;
   }
@@ -97,7 +158,83 @@ export default function Deadlines() {
             {f}
           </button>
         ))}
+        {/* only instructors see the add button */}
+        {isInstructor && (
+          <button className="filter-bttns" onClick={() => setShowForm(!showForm)}>
+            {showForm ? "Cancel" : "+ Add Deadline"}
+          </button>
+        )}
       </div>
+ 
+      {/* form only shows for instructors */}
+      {isInstructor && showForm && (
+        <div className="deadline-form">
+          <h3>New Deadline</h3>
+ 
+          <div className="form-group">
+            <label>Title</label>
+            <input
+              type="text"
+              placeholder="e.g. Assignment 1"
+              value={newDeadline.assn_desc}
+              onChange={(e) => setNewDeadline({ ...newDeadline, assn_desc: e.target.value })}
+            />
+          </div>
+ 
+          <div className="form-group">
+            <label>Course</label>
+            <select
+              value={newDeadline.course_id}
+              onChange={(e) => setNewDeadline({ ...newDeadline, course_id: e.target.value })}
+            >
+              <option value="">Select a course</option>
+              {courses.map((c) => (
+                <option key={c.course_id} value={c.course_id}>
+                  {c.course_code}
+                </option>
+              ))}
+            </select>
+          </div>
+ 
+          <div className="form-group">
+            <label>Type</label>
+            <select
+              value={newDeadline.assn_type}
+              onChange={(e) => setNewDeadline({ ...newDeadline, assn_type: parseInt(e.target.value) })}
+            >
+              {assignmentTypes.map((t) => (
+                <option key={t.value} value={t.value}>{t.label}</option>
+              ))}
+            </select>
+          </div>
+ 
+          <div className="form-group">
+            <label>Due Date</label>
+            <input
+              type="date"
+              value={newDeadline.due_date}
+              onChange={(e) => setNewDeadline({ ...newDeadline, due_date: e.target.value })}
+            />
+          </div>
+ 
+          <div className="form-group">
+            <label>Weight / Marks</label>
+            <input
+              type="number"
+              placeholder="e.g. 20"
+              value={newDeadline.weight}
+              onChange={(e) => setNewDeadline({ ...newDeadline, weight: e.target.value })}
+            />
+          </div>
+ 
+          <button className="detail-bttns" onClick={handleAddDeadline}>
+            Add Deadline
+          </button>
+          <button className="detail-bttns" onClick={() => setShowForm(false)}>
+            Cancel
+          </button>
+        </div>
+      )}
  
       <div className="deadlines-container">
         {filtered.length === 0 && (
@@ -114,9 +251,12 @@ export default function Deadlines() {
               <span>Due: {d.due}</span>
               <span>{d.marks}</span>
             </div>
-            <button className="detail-bttns" onClick={() => markComplete(d.id)}>
-              Mark Complete
-            </button>
+            {/* students can mark complete, instructors can delete */}
+            {!isInstructor && (
+              <button className="detail-bttns" onClick={() => markComplete(d.id)}>
+                Mark Complete
+              </button>
+            )}
             <button className="detail-bttns" onClick={() => deleteDeadline(d.id)}>
               Delete
             </button>

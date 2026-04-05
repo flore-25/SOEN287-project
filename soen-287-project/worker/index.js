@@ -434,25 +434,6 @@ app.get("/api/deadlines", async (req, res) => {
   }
 });
  
-// POST add a new deadline
-app.post("/api/deadlines", async (req, res) => {
-  if (!req.user) return res.status(401).json({ error: "Not logged in" });
- 
-  try {
-    const { course_id, assn_desc, assn_type, due_date, weight } = req.body;
- 
-    // insert into assignment table
-    await env.DB.prepare(`
-      INSERT INTO assignment (course_id, assn_desc, assn_type, due_date, weight)
-      VALUES (?, ?, ?, ?, ?)
-    `).bind(course_id, assn_desc, assn_type, due_date, weight).run();
- 
-    res.status(201).json({ message: "Deadline added successfully" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to add deadline" });
-  }
-});
  
 // PUT mark a deadline as complete
 app.put("/api/deadlines/:assignmentId/complete", async (req, res) => {
@@ -494,15 +475,17 @@ app.put("/api/deadlines/:assignmentId/complete", async (req, res) => {
 // DELETE a deadline
 app.delete("/api/deadlines/:assignmentId", async (req, res) => {
   if (!req.user) return res.status(401).json({ error: "Not logged in" });
- 
+
   try {
+    const userId = req.user.user_id;
     const { assignmentId } = req.params;
     const { course_id } = req.body;
- 
+
     await env.DB.prepare(`
-      DELETE FROM assignment WHERE assignment_id = ? AND course_id = ?
-    `).bind(assignmentId, course_id).run();
- 
+      DELETE FROM student_assignment 
+      WHERE user_id = ? AND assignment_id = ? AND course_id = ?
+    `).bind(userId, assignmentId, course_id).run();
+
     res.json({ message: "Deleted successfully" });
   } catch (err) {
     console.error(err);

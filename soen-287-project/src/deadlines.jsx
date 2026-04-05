@@ -95,6 +95,7 @@ export default function Deadlines() {
   };
  
   const deleteDeadline = (id) => {
+    console.log("id", id);
     const deadline = deadlines.find((d) => d.id === id);
     fetch(`/api/deadlines/${id}`, {
       method: "DELETE",

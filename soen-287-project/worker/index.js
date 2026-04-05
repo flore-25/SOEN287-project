@@ -21,6 +21,15 @@ app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: false}));
 app.use(express.json());
 
+app.use(async (req, res, next) => {
+  try {
+    await env.DB.prepare('PRAGMA foreign_keys = ON').run();
+    next();
+  } catch(err) {
+    next(err);
+  }
+});
+
 function toPublicUser(row) {
   if (!row) return null;
   return {
@@ -407,10 +416,30 @@ app.get("/api/deadlines", async (req, res) => {
   if (!req.user) return res.status(401).json({ error: "Not logged in" });
  
   try {
+
     const userId = req.user.user_id;
-    const rows = await env.DB.prepare(`
+    let rows;
+
+    if(req.user.role === 1) {
+      rows = await env.DB.prepare(`
+        select 
+          a.assignment_id,
+          a.course_id,
+          a.assn_desc as title,
+          c.course_code as course,
+          a.due_date,
+          a.weight as marks,
+          null as status
+        from assignment a
+        join course c on c.course_id = a.course_id
+        where c.prof_id = ?
+        order by a.due_date asc
+      `).bind(userId).all();
+    } else {
+      rows = await env.DB.prepare(`
       SELECT 
         a.assignment_id,
+        a.course_id,
         a.assn_desc as title,
         c.course_code as course,
         a.due_date,
@@ -426,6 +455,7 @@ app.get("/api/deadlines", async (req, res) => {
       WHERE sc.user_id = ?
       ORDER BY a.due_date ASC
     `).bind(userId, userId).all();
+    }
  
     res.json(rows.results);
   } catch (err) {
@@ -481,10 +511,20 @@ app.delete("/api/deadlines/:assignmentId", async (req, res) => {
     const { assignmentId } = req.params;
     const { course_id } = req.body;
 
-    await env.DB.prepare(`
-      DELETE FROM student_assignment 
-      WHERE user_id = ? AND assignment_id = ? AND course_id = ?
-    `).bind(userId, assignmentId, course_id).run();
+    if(req.user.role === 1) {
+      await env.DB.prepare(`
+        delete from student_assignment where assignment_id = ? and course_id = ?
+        `).bind(assignmentId, course_id).run();
+      await env.DB.prepare(`
+          delete from assignment where assignment_id = ? and course_id = ?
+        `).bind(assignmentId, course_id). run();
+    } else {
+      await env.DB.prepare(`
+        DELETE FROM student_assignment 
+        WHERE user_id = ? AND assignment_id = ? AND course_id = ?
+      `).bind(userId, assignmentId, course_id).run();
+    }
+    
 
     res.json({ message: "Deleted successfully" });
   } catch (err) {
@@ -567,34 +607,23 @@ app.post("/api/deadlines", async (req, res) => {
   try {
     const { course_id, assn_desc, assn_type, due_date, weight } = req.body;
 
+    const maxRow = await env.DB.prepare(`
+      select coalesce(max(assignment_id), 0) + 1 as next_id
+      from assignment
+      where course_id = ?
+      `).bind(course_id).first();
+    
+    const assignment_id = maxRow.next_id;
+
     await env.DB.prepare(`
-      INSERT INTO assignment (course_id, assn_desc, assn_type, due_date, weight)
+      INSERT INTO assignment (assignment_id, course_id, assn_desc, assn_type, due_date, weight)
       VALUES (?, ?, ?, ?, ?)
-    `).bind(course_id, assn_desc, assn_type, due_date, weight).run();
+    `).bind(assignment_id, course_id, assn_desc, assn_type, due_date, weight).run();
 
     res.status(201).json({ message: "Deadline added successfully" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to add deadline" });
-  }
-});
-
-app.get("/api/courses", async (req, res) => {
-  if (!req.user) return res.status(401).json({ error: "Not logged in" });
-
-  try {
-    const userId = req.user.user_id;
-    const rows = await env.DB.prepare(`
-      SELECT c.course_id, c.course_code
-      FROM student_course sc
-      JOIN course c ON c.course_id = sc.course_id
-      WHERE sc.user_id = ?
-    `).bind(userId).all();
-
-    res.json(rows.results);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to get courses" });
   }
 });
 
